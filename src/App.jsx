@@ -10,6 +10,7 @@ function App() {
     <Navbar />
       <h2>Kuy Lek</h2>
       <h3>gram big dick</h3>
+      <h3>KUY56</h3>
       <Name />
     </>
   )
