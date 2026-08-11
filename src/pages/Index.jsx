@@ -1,7 +1,7 @@
-
+import Navbar from '../components/Navbar'
 function Index() {
   return (
-    <div>Index</div>
+    <><Navbar/></>
   )
 }
 
