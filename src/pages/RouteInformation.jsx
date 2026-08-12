@@ -15,30 +15,36 @@ const StepperContent = ({ origin, originDetail, destination, destinationDetail, 
   ].filter((s) => s.name && s.name.trim() !== '');
 
   return (
-    <div style={{ display: 'flex', flexDirection: 'column' }}>
+    <div className="ri-stepper-container">
       <div className="ri-stepper">
         {allStops.map((stop, index) => {
           const isStart = stop.type === 'start';
           const isEnd = stop.type === 'end';
-          let stepClass = 'ri-step';
-          if (isStart) stepClass += ' start';
-          if (isEnd) stepClass += ' end';
+          const isLast = index === allStops.length - 1;
 
           return (
-            <div className={stepClass} key={index}>
-              <div className="ri-step-indicator"></div>
+            <div className={`ri-step ${stop.type}`} key={index}>
+              {/* Timeline Indicator Column */}
+              <div className="ri-timeline-col">
+                <div className={`ri-step-circle ${stop.type}`}>
+                  {(isStart || isEnd) && <div className="ri-inner-dot" />}
+                </div>
+                {!isLast && <div className="ri-timeline-line" />}
+              </div>
+
+              {/* Step Details */}
               <div className="ri-step-content">
-                <h3 className="ri-step-title">
-                  {stop.name}
+                <div className="ri-step-header">
+                  <h3 className="ri-step-title">{stop.name}</h3>
                   {stop.detail && (
-                    <span style={{ fontSize: '0.85em', fontWeight: 'normal', color: '#666', marginLeft: '6px' }}>
+                    <span className="ri-step-detail">
                       ({stop.detail})
                     </span>
                   )}
-                </h3>
-                <p className="ri-step-subtitle">
+                </div>
+                <span className={`ri-step-tag ${stop.type}`}>
                   {isStart ? 'จุดเริ่มต้น' : isEnd ? 'จุดหมายปลายทาง' : 'จุดแวะพัก'}
-                </p>
+                </span>
               </div>
             </div>
           );
@@ -46,7 +52,7 @@ const StepperContent = ({ origin, originDetail, destination, destinationDetail, 
       </div>
 
       <div className="ri-bottom-banner">
-        ข้อมูลนี้เป็นเส้นทางรถตามจุดจอดที่มีในระบบไม่ใช่การติดตามตำแหน่งรถแบบเรียลไทม์
+        ข้อมูลนี้เป็นเส้นทางรถตามจุดจอดที่มีในระบบ ไม่ใช่การติดตามตำแหน่งรถแบบเรียลไทม์
       </div>
     </div>
   );
@@ -313,11 +319,6 @@ const RouteInformation = () => {
                 }}
               >
                 <span className="ri-badge">{company}</span>
-                {price && (
-                  <span style={{ color: 'white', fontWeight: 'bold', fontSize: '18px' }}>
-                    {price}
-                  </span>
-                )}
               </div>
               <h2 className="ri-card-title">{title}</h2>
 

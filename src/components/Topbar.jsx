@@ -1,8 +1,9 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { FiSearch, FiChevronDown, FiMapPin, FiClock, FiMenu } from 'react-icons/fi';
+import { FiSearch, FiChevronDown, FiMapPin, FiClock } from 'react-icons/fi';
 import { IoMdClose } from 'react-icons/io';
 import { FaBus } from 'react-icons/fa';
 import gsap from 'gsap';
+import HamburgerMenu from './HamburgerMenu';
 
 function Topbar() {
   const [isSearchModalOpen, setIsSearchModalOpen] = useState(false);
@@ -148,30 +149,34 @@ function Topbar() {
             </div>
           </div>
 
-          <div className="flex items-center justify-center cursor-pointer text-black">
+          <div className="flex items-center gap-3 text-black">
             {/* Mobile Search Icon */}
             <div 
-              className="w-8 h-8 md:hidden flex items-center justify-center"
+              className="w-9 h-9 md:hidden flex items-center justify-center rounded-xl bg-pink-50 hover:bg-pink-100 text-pink-500 transition-colors cursor-pointer"
               onClick={() => {
                 setIsSearchModalOpen(true);
                 if (isDropdownOpen) setIsDropdownOpen(false);
                 if (isLangDropdownOpen) setIsLangDropdownOpen(false);
               }}
+              title="Search"
             >
-              <FiSearch size={22} />
+              <FiSearch size={20} />
             </div>
             
-            {/* Desktop Hamburger Icon */}
-            <div 
-              className="hidden md:flex w-8 h-8 items-center justify-center"
-              onClick={() => {
-                setIsDesktopMenuOpen(!isDesktopMenuOpen);
-                if (isDropdownOpen) setIsDropdownOpen(false);
-                if (isLangDropdownOpen) setIsLangDropdownOpen(false);
+            {/* Enhanced Hamburger Menu Component */}
+            <HamburgerMenu
+              isOpen={isDesktopMenuOpen}
+              setIsOpen={(val) => {
+                setIsDesktopMenuOpen(val);
+                if (val) {
+                  if (isDropdownOpen) setIsDropdownOpen(false);
+                  if (isLangDropdownOpen) setIsLangDropdownOpen(false);
+                }
               }}
-            >
-              {isDesktopMenuOpen ? <IoMdClose size={26} /> : <FiMenu size={26} />}
-            </div>
+              onOpenSearchModal={() => {
+                setIsSearchModalOpen(true);
+              }}
+            />
           </div>
         </div>
 
@@ -245,28 +250,7 @@ function Topbar() {
         </div>
       )}
 
-      {/* Desktop Simple Sidebar Menu */}
-      {isDesktopMenuOpen && (
-        <div className="hidden md:flex fixed top-[72px] right-0 h-[calc(100vh-72px)] w-80 bg-white shadow-[-10px_0_30px_rgba(0,0,0,0.1)] z-40 flex-col py-8 px-8 border-l border-gray-100">
-           <div className="flex flex-col gap-8">
-              <a href="/" className="text-2xl font-black text-[#241D4F] hover:text-pink-500 transition-colors">
-                Home
-              </a>
-              <a href="/bus-stops" className="text-2xl font-black text-[#241D4F] hover:text-pink-500 transition-colors">
-                Bus Stops
-              </a>
-              <button 
-                onClick={() => {
-                  setIsDesktopMenuOpen(false);
-                  setIsSearchModalOpen(true);
-                }} 
-                className="text-left text-2xl font-black text-[#241D4F] hover:text-pink-500 transition-colors"
-              >
-                Search
-              </button>
-           </div>
-        </div>
-      )}
+
     </>
   );
 }
