@@ -1,29 +1,74 @@
+import { useState, useRef, useEffect } from 'react';
+import { useLocation, useNavigate } from 'react-router-dom';
+import gsap from 'gsap';
+import { BiMap, BiBus, BiSupport } from "react-icons/bi";
 
 function Navbar() {
+  const [activeIndex, setActiveIndex] = useState(0);
+  const indicatorRef = useRef(null);
+  const containerRef = useRef(null);
+  const iconsRef = useRef([]);
+  const location = useLocation();
+  const navigate = useNavigate();
+
+  const items = [
+    { id: 'map', path: '/', icon: <BiMap className="w-7 h-7" /> },
+    { id: 'bus', path: '/bus-stops', icon: <BiBus className="w-7 h-7" /> },
+    { id: 'help', path: '/help', icon: <BiSupport className="w-7 h-7" /> }
+  ];
+
+  useEffect(() => {
+    const currentIndex = items.findIndex(item => item.path === location.pathname);
+    if (currentIndex !== -1 && currentIndex !== activeIndex) {
+      setActiveIndex(currentIndex);
+    }
+  }, [location.pathname]);
+
+  useEffect(() => {
+    if (iconsRef.current[activeIndex] && indicatorRef.current && containerRef.current) {
+      const activeElement = iconsRef.current[activeIndex];
+      const containerRect = containerRef.current.getBoundingClientRect();
+      const elRect = activeElement.getBoundingClientRect();
+
+      const offsetLeft = elRect.left - containerRect.left + (elRect.width / 2) - 26;
+
+      gsap.to(indicatorRef.current, {
+        x: offsetLeft,
+        duration: 0.6,
+        ease: "elastic.out(1, 0.7)",
+      });
+
+      gsap.fromTo(activeElement,
+        { y: 0, scale: 1 },
+        { y: -6, scale: 1.15, duration: 0.3, ease: "power2.out", yoyo: true, repeat: 1 }
+      );
+    }
+  }, [activeIndex]);
+
   return (
-    <>
-    
-    
-    <div style={{
-        position: 'fixed',
-        bottom: '30px',
-        left: '50%',
-        transform: 'translateX(-50%)',
-        background: '#ff6392',
-        borderRadius: '50px',
-        padding: '12px 30px',
-        display: 'flex',
-        gap: '40px',
-        zIndex: 1000
-      }}>
-        {/* Map */}
-        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="black" strokeWidth="2"><polygon points="1 6 1 22 8 18 16 22 23 18 23 2 16 6 8 2 1 6"/><line x1="8" y1="2" x2="8" y2="18"/><line x1="16" y1="6" x2="16" y2="22"/></svg>
-        {/* Headset */}
-        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="black" strokeWidth="2"><path d="M3 18v-6a9 9 0 0 1 18 0v6"/><path d="M21 19a2 2 0 0 1-2 2h-1a2 2 0 0 1-2-2v-3a2 2 0 0 1 2-2h3zM3 19a2 2 0 0 0 2 2h1a2 2 0 0 0 2-2v-3a2 2 0 0 0-2-2H3z"/></svg>
-        {/* Help */}
-        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="black" strokeWidth="2"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
-      </div>
-    </>
+    <div
+      ref={containerRef}
+      className="fixed bottom-[30px] left-1/2 -translate-x-1/2 bg-[#ff6392] rounded-[50px] px-6 py-3 flex md:hidden gap-6 z-[1000] shadow-[0_10px_25px_rgba(255,99,146,0.3)]"
+    >
+      <div
+        ref={indicatorRef}
+        className="absolute w-[52px] h-[52px] bg-[#ffe4eb] rounded-full top-1/2 -mt-[26px] left-0 z-0 shadow-[0_4px_12px_rgba(0,0,0,0.1)] box-border"
+      />
+
+      {items.map((item, index) => (
+        <div
+          key={item.id}
+          ref={el => iconsRef.current[index] = el}
+          onClick={() => {
+            setActiveIndex(index);
+            navigate(item.path);
+          }}
+          className={`relative z-10 cursor-pointer flex items-center justify-center w-12 h-12 transition-colors duration-[400ms] ease-in-out ${activeIndex === index ? 'text-[#ff6392]' : 'text-white'}`}
+        >
+          {item.icon}
+        </div>
+      ))}
+    </div>
   )
 }
 
