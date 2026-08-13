@@ -1,4 +1,5 @@
 import React, { useState, useRef, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { FiSearch, FiChevronDown, FiMapPin, FiClock } from 'react-icons/fi';
 import { IoMdClose } from 'react-icons/io';
 import { FaBus } from 'react-icons/fa';
@@ -6,7 +7,9 @@ import gsap from 'gsap';
 import HamburgerMenu from './HamburgerMenu';
 
 function Topbar() {
+  const navigate = useNavigate();
   const [isSearchModalOpen, setIsSearchModalOpen] = useState(false);
+  const [modalSearchQuery, setModalSearchQuery] = useState('');
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const [isLangDropdownOpen, setIsLangDropdownOpen] = useState(false);
   const [isDesktopMenuOpen, setIsDesktopMenuOpen] = useState(false);
@@ -232,17 +235,28 @@ function Topbar() {
             </div>
 
             {/* Search Input */}
-            <div className="relative mb-8">
+            <form
+              onSubmit={(e) => {
+                e.preventDefault();
+                if (modalSearchQuery.trim()) {
+                  closeSearchModal();
+                  navigate(`/bus-stops?q=${encodeURIComponent(modalSearchQuery.trim())}`);
+                }
+              }}
+              className="relative mb-8"
+            >
               <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
                 <FiSearch className="text-[#ff7a00]" size={22} />
               </div>
               <input
                 type="text"
                 autoFocus
-                placeholder="Where to?"
-                className="w-full bg-gray-50 border-2 border-transparent text-gray-900 rounded-2xl py-4 pl-12 pr-4 text-lg font-medium placeholder-gray-400 outline-none transition-all shadow-sm"
+                value={modalSearchQuery}
+                onChange={(e) => setModalSearchQuery(e.target.value)}
+                placeholder="Where to? (Press Enter to search)"
+                className="w-full bg-gray-50 border-2 border-transparent text-gray-900 rounded-2xl py-4 pl-12 pr-4 text-lg font-medium placeholder-gray-400 outline-none transition-all shadow-sm focus:border-pink-300"
               />
-            </div>
+            </form>
 
 
 

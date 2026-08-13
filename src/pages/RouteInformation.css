@@ -409,3 +409,183 @@
     min-height: 55vh;
   }
 }
+
+/* ==========================================================================
+   Route Information Search Box & Quick Route Selector Styles
+   ========================================================================== */
+
+.ri-search-container {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  background: #ffffff;
+  border: 1px solid #e2e8f0;
+  border-radius: 14px;
+  padding: 14px;
+  margin-bottom: 20px;
+}
+
+.ri-search-header-title {
+  font-size: 12px;
+  font-weight: 700;
+  color: #475569;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-bottom: 2px;
+}
+
+.ri-search-inputs-wrapper {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  position: relative;
+}
+
+.ri-search-field {
+  position: relative;
+  width: 100%;
+}
+
+.ri-field-icon {
+  position: absolute;
+  left: 10px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: #94a3b8;
+  pointer-events: none;
+  z-index: 2;
+}
+
+.ri-field-icon.origin {
+  color: #ff4d85;
+}
+
+.ri-field-icon.dest {
+  color: #ff6b00;
+}
+
+.ri-search-input {
+  width: 100%;
+  background: #f8fafc;
+  border: 1px solid #e2e8f0;
+  border-radius: 10px;
+  padding: 8px 10px 8px 32px;
+  font-size: 13px;
+  font-weight: 500;
+  color: #0f172a;
+  outline: none;
+  transition: border-color 0.15s ease, background-color 0.15s ease;
+}
+
+.ri-search-input:focus {
+  background: #ffffff;
+  border-color: #94a3b8;
+}
+
+.ri-autocomplete-dropdown {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  right: 0;
+  z-index: 50;
+  margin-top: 4px;
+  background: #ffffff;
+  border: 1px solid #e2e8f0;
+  border-radius: 10px;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
+  max-height: 180px;
+  overflow-y: auto;
+}
+
+.ri-autocomplete-item {
+  padding: 8px 12px;
+  font-size: 12.5px;
+  font-weight: 500;
+  color: #334155;
+  cursor: pointer;
+  transition: background 0.12s ease;
+  border-bottom: 1px solid #f1f5f9;
+}
+
+.ri-autocomplete-item:last-child {
+  border-bottom: none;
+}
+
+.ri-autocomplete-item:hover {
+  background: #f1f5f9;
+  color: #0f172a;
+}
+
+.ri-search-actions {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-top: 2px;
+}
+
+.ri-swap-btn {
+  background: #f8fafc;
+  border: 1px solid #e2e8f0;
+  color: #64748b;
+  border-radius: 10px;
+  padding: 8px 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.ri-swap-btn:hover {
+  background: #f1f5f9;
+  color: #0f172a;
+  border-color: #cbd5e1;
+}
+
+.ri-submit-btn {
+  flex: 1;
+  background: #241D4F;
+  color: #ffffff;
+  border: none;
+  border-radius: 10px;
+  padding: 8px 14px;
+  font-size: 12.5px;
+  font-weight: 600;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  transition: background-color 0.15s ease;
+}
+
+.ri-submit-btn:hover {
+  background: #181337;
+}
+
+.ri-quick-select-wrapper {
+  margin-top: 2px;
+}
+
+.ri-quick-select {
+  width: 100%;
+  background: #f8fafc;
+  border: 1px solid #e2e8f0;
+  border-radius: 10px;
+  padding: 8px 10px;
+  font-size: 12px;
+  font-weight: 500;
+  color: #475569;
+  outline: none;
+  cursor: pointer;
+}
+
+/* Mobile Search Banner */
+.ri-mobile-search-banner {
+  background: #ffffff;
+  padding: 12px 16px;
+  border-bottom: 1px solid #e2e8f0;
+  z-index: 30;
+}
+

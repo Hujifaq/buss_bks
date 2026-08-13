@@ -28,12 +28,6 @@ function HamburgerMenu({ isOpen, setIsOpen }) {
       icon: FiMap,
     },
     {
-      id: 'search',
-      label: 'Search Routes',
-      path: '/search-routes',
-      icon: FiSearch,
-    },
-    {
       id: 'help',
       label: 'Help & Support',
       path: '/help',
