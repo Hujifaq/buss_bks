@@ -1,8 +1,14 @@
-import React, { useState, useEffect, useRef } from 'react';
-import { FiMapPin, FiCalendar, FiSearch, FiClock, FiCheckCircle } from 'react-icons/fi';
+import React, { useState, useEffect, useRef, useLayoutEffect } from 'react';
+import { FiMapPin, FiCalendar, FiSearch, FiClock, FiCheckCircle, FiArrowRight } from 'react-icons/fi';
 import { FaExchangeAlt, FaBus } from 'react-icons/fa';
 import { useNavigate } from 'react-router-dom';
 import { supabase } from '../lib/supabaseClient';
+import gsap from 'gsap';
+import { ScrollTrigger } from 'gsap/ScrollTrigger';
+import Guidebook from '../components/Guidebook';
+import { useTranslation } from 'react-i18next';
+
+gsap.registerPlugin(ScrollTrigger);
 
 const AutocompleteInput = ({ value, onChange, placeholder, icon: Icon, locations, isOrigin }) => {
   const [isOpen, setIsOpen] = useState(false);
@@ -36,12 +42,12 @@ const AutocompleteInput = ({ value, onChange, placeholder, icon: Icon, locations
         onFocus={() => setIsOpen(true)}
         className="w-full bg-gray-50 border border-gray-200 rounded-lg pl-11 pr-4 py-4 text-gray-800 focus:outline-none focus:bg-white transition-all font-medium text-lg h-full"
       />
-      
+
       {/* Dropdown Menu */}
       {isOpen && filtered.length > 0 && (
         <div className="absolute top-full left-0 z-50 w-full mt-2 bg-white border border-gray-100 rounded-xl shadow-[0_10px_25px_rgba(0,0,0,0.1)] max-h-60 overflow-y-auto">
           {filtered.map((loc, idx) => (
-            <div 
+            <div
               key={idx}
               className="px-5 py-3 hover:bg-[#fff0f5] cursor-pointer text-gray-700 transition-colors border-b border-gray-50 last:border-0"
               onClick={() => {
@@ -59,33 +65,216 @@ const AutocompleteInput = ({ value, onChange, placeholder, icon: Icon, locations
   );
 };
 
+// ── Guide Step Panel ──
+const GuideStep = React.forwardRef(({ step, index, total }, ref) => {
+  const Icon = step.icon;
+  const isLast = index === total - 1;
+  const accentColors = ['#ec4899', '#6366f1', '#f97316'];
+  const accent = accentColors[index] || '#ec4899';
+
+  return (
+    <div
+      ref={ref}
+      className="guide-step"
+      style={{
+        display: 'flex',
+        flexDirection: 'row',
+        alignItems: 'center',
+        gap: '0',
+        width: '100%',
+        minHeight: '340px',
+        position: 'relative',
+      }}
+    >
+      {/* Left: giant step number */}
+      <div
+        className="guide-step-number"
+        style={{
+          flex: '0 0 auto',
+          width: '160px',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+        }}
+      >
+        <span
+          style={{
+            fontSize: 'clamp(80px, 12vw, 140px)',
+            fontWeight: 900,
+            lineHeight: 1,
+            color: 'transparent',
+            WebkitTextStroke: `2px ${accent}`,
+            letterSpacing: '-0.06em',
+            userSelect: 'none',
+          }}
+        >
+          {step.step}
+        </span>
+      </div>
+
+      {/* Center: content */}
+      <div
+        className="guide-step-body"
+        style={{
+          flex: 1,
+          display: 'flex',
+          flexDirection: 'column',
+          gap: '16px',
+          padding: '40px 0',
+        }}
+      >
+        <div className="guide-step-icon-row" style={{ display: 'flex', alignItems: 'center', gap: '14px' }}>
+          <div
+            style={{
+              width: 48,
+              height: 48,
+              borderRadius: 14,
+              background: `${accent}12`,
+              border: `1.5px solid ${accent}30`,
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              color: accent,
+            }}
+          >
+            <Icon size={22} />
+          </div>
+          <div
+            style={{
+              height: '1px',
+              flex: 1,
+              maxWidth: '80px',
+              background: `linear-gradient(to right, ${accent}40, transparent)`,
+            }}
+          />
+        </div>
+
+        <h3
+          className="guide-step-title"
+          style={{
+            fontSize: 'clamp(22px, 3vw, 30px)',
+            fontWeight: 800,
+            color: '#1e1b4b',
+            lineHeight: 1.3,
+            margin: 0,
+            letterSpacing: '-0.02em',
+          }}
+        >
+          {step.title}
+        </h3>
+
+        <p
+          className="guide-step-desc"
+          style={{
+            fontSize: '15px',
+            fontWeight: 500,
+            color: '#64748b',
+            lineHeight: 1.7,
+            margin: 0,
+            maxWidth: '480px',
+          }}
+        >
+          {step.desc}
+        </p>
+
+        {!isLast && (
+          <div
+            className="guide-step-next"
+            style={{
+              display: 'inline-flex',
+              alignItems: 'center',
+              gap: '6px',
+              fontSize: '13px',
+              fontWeight: 700,
+              color: accent,
+              marginTop: '8px',
+              letterSpacing: '0.03em',
+              textTransform: 'uppercase',
+            }}
+          >
+            <span>ขั้นตอนถัดไป</span>
+            <FiArrowRight size={14} />
+          </div>
+        )}
+      </div>
+
+      {/* Right: decorative ring */}
+      <div
+        className="guide-step-ring"
+        style={{
+          flex: '0 0 auto',
+          width: '120px',
+          height: '120px',
+          borderRadius: '50%',
+          border: `2px solid ${accent}20`,
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          position: 'relative',
+        }}
+      >
+        <div
+          style={{
+            width: '8px',
+            height: '8px',
+            borderRadius: '50%',
+            background: accent,
+          }}
+        />
+      </div>
+
+      {/* Divider line */}
+      {!isLast && (
+        <div
+          className="guide-step-divider"
+          style={{
+            position: 'absolute',
+            bottom: 0,
+            left: '80px',
+            right: '60px',
+            height: '1px',
+            background: 'linear-gradient(to right, #e2e8f0, transparent)',
+          }}
+        />
+      )}
+    </div>
+  );
+});
+
 function Index() {
+  const { t } = useTranslation();
   const [from, setFrom] = useState('นครราชสีมา');
   const [to, setTo] = useState('');
   const [time, setTime] = useState('');
   const [locations, setLocations] = useState([]);
+  const [activeStep, setActiveStep] = useState(0);
 
   const navigate = useNavigate();
+
+  const guideSectionRef = useRef(null);
+  const guideHeaderRef = useRef(null);
+  const stepRefs = useRef([]);
+  const progressBarRef = useRef(null);
 
   useEffect(() => {
     const fetchLocations = async () => {
       try {
         const { data, error } = await supabase.from('bus_routes').select('route_name_th, route_name_en');
         if (error) throw error;
-        
+
         if (data) {
           const locMap = new Map();
-          
+
           data.forEach(r => {
             const thParts = (r.route_name_th || '').split(/\s*[-–—_:|]\s*/).map(s => s.trim()).filter(Boolean);
             const enParts = (r.route_name_en || '').split(/\s*[-–—_:|]\s*/).map(s => s.trim()).filter(Boolean);
-            
+
             if (thParts.length >= 2) {
               const originTh = thParts[0];
               const destTh = thParts[thParts.length - 1];
               const originEn = enParts.length >= 2 ? enParts[0] : '';
               const destEn = enParts.length >= 2 ? enParts[enParts.length - 1] : '';
-              
+
               if (!locMap.has(originTh)) {
                 locMap.set(originTh, {
                   value: originTh,
@@ -110,29 +299,29 @@ function Index() {
               }
             }
           });
-          
+
           const sortedLocs = Array.from(locMap.values()).sort((a, b) => a.value.localeCompare(b.value));
-          
+
           if (sortedLocs.length === 0) {
-             setLocations([
-               { value: 'นครราชสีมา', enValue: 'Nakhon Ratchasima', searchString: 'นครราชสีมา nakhon ratchasima' },
-               { value: 'กรุงเทพฯ', enValue: 'Bangkok', searchString: 'กรุงเทพฯ bangkok' },
-               { value: 'ปากช่อง', enValue: 'Pak Chong', searchString: 'ปากช่อง pak chong' }
-             ]);
+            setLocations([
+              { value: 'นครราชสีมา', enValue: 'Nakhon Ratchasima', searchString: 'นครราชสีมา nakhon ratchasima' },
+              { value: 'กรุงเทพฯ', enValue: 'Bangkok', searchString: 'กรุงเทพฯ bangkok' },
+              { value: 'ปากช่อง', enValue: 'Pak Chong', searchString: 'ปากช่อง pak chong' }
+            ]);
           } else {
-             setLocations(sortedLocs);
+            setLocations(sortedLocs);
           }
         }
       } catch (err) {
         console.error("Failed to load locations for autocomplete", err);
         setLocations([
-           { value: 'นครราชสีมา', enValue: 'Nakhon Ratchasima', searchString: 'นครราชสีมา nakhon ratchasima' },
-           { value: 'กรุงเทพฯ', enValue: 'Bangkok', searchString: 'กรุงเทพฯ bangkok' },
-           { value: 'ปากช่อง', enValue: 'Pak Chong', searchString: 'ปากช่อง pak chong' }
+          { value: 'นครราชสีมา', enValue: 'Nakhon Ratchasima', searchString: 'นครราชสีมา nakhon ratchasima' },
+          { value: 'กรุงเทพฯ', enValue: 'Bangkok', searchString: 'กรุงเทพฯ bangkok' },
+          { value: 'ปากช่อง', enValue: 'Pak Chong', searchString: 'ปากช่อง pak chong' }
         ]);
       }
     };
-    
+
     fetchLocations();
   }, []);
 
@@ -153,26 +342,117 @@ function Index() {
   const steps = [
     {
       step: '01',
-      title: 'เลือกต้นทางและปลายทาง',
-      desc: 'ระบุจุดเริ่มต้นและสถานที่ปลายทางที่ต้องการเดินทาง หรือเลือกจากรายการจุดจอดสถานีขนส่ง',
+      title: t('guidebook.steps.0.title'),
+      desc: t('guidebook.steps.0.desc'),
       icon: FiMapPin,
-      badgeColor: 'bg-pink-50 text-pink-600 border-pink-100',
     },
     {
       step: '02',
-      title: 'ค้นหาเส้นทางและตารางเวลา',
-      desc: 'ตรวจสอบรอบเวลาเดินรถ ราคาค่าโดยสาร ประเภทรถ (รถทัวร์/รถตู้/สองแถว) และจุดแวะพักระหว่างทาง',
+      title: t('guidebook.steps.1.title'),
+      desc: t('guidebook.steps.1.desc'),
       icon: FaBus,
-      badgeColor: 'bg-indigo-50 text-indigo-600 border-indigo-100',
     },
     {
       step: '03',
-      title: 'ดูแผนที่และเริ่มเดินทาง',
-      desc: 'ดูเส้นทางจำลองบนแผนที่เพื่อเตรียมตัวเดินทางไปยังสถานีขนส่งหรือจุดจอดได้อย่างแม่นยำ',
+      title: t('guidebook.steps.2.title'),
+      desc: t('guidebook.steps.2.desc'),
       icon: FiCheckCircle,
-      badgeColor: 'bg-orange-50 text-orange-600 border-orange-100',
     },
   ];
+
+  // ── GSAP ScrollTrigger animations ──
+  useLayoutEffect(() => {
+    const ctx = gsap.context(() => {
+
+      // Header entrance
+      if (guideHeaderRef.current) {
+        const headerEls = guideHeaderRef.current.children;
+        gsap.fromTo(headerEls,
+          { y: 60, opacity: 0 },
+          {
+            y: 0,
+            opacity: 1,
+            duration: 0.8,
+            stagger: 0.15,
+            ease: 'power3.out',
+            scrollTrigger: {
+              trigger: guideHeaderRef.current,
+              start: 'top 85%',
+              end: 'top 50%',
+              toggleActions: 'play none none reverse',
+            },
+          }
+        );
+      }
+
+      // Each step panel
+      stepRefs.current.forEach((el, i) => {
+        if (!el) return;
+
+        const number = el.querySelector('.guide-step-number');
+        const body = el.querySelector('.guide-step-body');
+        const ring = el.querySelector('.guide-step-ring');
+        const divider = el.querySelector('.guide-step-divider');
+
+        const tl = gsap.timeline({
+          scrollTrigger: {
+            trigger: el,
+            start: 'top 80%',
+            end: 'top 30%',
+            toggleActions: 'play none none reverse',
+            onEnter: () => setActiveStep(i),
+            onEnterBack: () => setActiveStep(i),
+          },
+        });
+
+        tl.fromTo(number,
+          { x: -80, opacity: 0, scale: 0.6 },
+          { x: 0, opacity: 1, scale: 1, duration: 0.7, ease: 'power3.out' }
+        );
+        tl.fromTo(body.children,
+          { y: 40, opacity: 0 },
+          { y: 0, opacity: 1, duration: 0.6, stagger: 0.1, ease: 'power3.out' },
+          '-=0.4'
+        );
+
+        if (ring) {
+          tl.fromTo(ring,
+            { scale: 0, rotation: -90, opacity: 0 },
+            { scale: 1, rotation: 0, opacity: 1, duration: 0.6, ease: 'back.out(1.4)' },
+            '-=0.4'
+          );
+        }
+
+        if (divider) {
+          tl.fromTo(divider,
+            { scaleX: 0, transformOrigin: 'left center' },
+            { scaleX: 1, duration: 0.5, ease: 'power2.out' },
+            '-=0.3'
+          );
+        }
+      });
+
+      // Progress bar
+      if (progressBarRef.current && guideSectionRef.current) {
+        gsap.fromTo(progressBarRef.current,
+          { scaleX: 0 },
+          {
+            scaleX: 1,
+            ease: 'none',
+            scrollTrigger: {
+              trigger: guideSectionRef.current,
+              start: 'top 60%',
+              end: 'bottom 40%',
+              scrub: 0.3,
+            },
+          }
+        );
+      }
+
+    }, guideSectionRef);
+
+    return () => ctx.revert();
+  }, []);
 
   return (
     <div className="min-h-screen bg-gray-50 flex flex-col w-full overflow-x-hidden">
@@ -181,9 +461,9 @@ function Index() {
       <div
         className="relative w-full h-[60vh] min-h-[400px] flex flex-col items-center justify-end pb-24 md:pb-20"
         style={{
-          backgroundImage: 'url("https://images.unsplash.com/photo-1572675339312-3e8b094a544d?q=80&w=1170&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D")',
+          backgroundImage: 'url("/src/assets/bg-bks.jpg")',
           backgroundSize: 'cover',
-          backgroundPosition: 'center',
+          backgroundPosition: 'center 80%',
         }}
       >
         {/* Dark Gradient Overlay for text readability */}
@@ -192,10 +472,10 @@ function Index() {
         {/* Hero Text aligned with container */}
         <div className="relative z-10 w-full max-w-6xl px-4 mb-4">
           <h1 className="text-4xl md:text-5xl font-black text-white drop-shadow-lg tracking-tight mb-2 text-center md:text-left">
-            Where will your next journey begin?
+            {t('hero.headline')}
           </h1>
           <p className="text-xl md:text-xl text-gray-200 font-medium drop-shadow-md text-center md:text-left">
-            Find the best bus routes across Nakhon Ratchasima in seconds.
+            {t('hero.subtitle')}
           </p>
         </div>
       </div>
@@ -207,11 +487,11 @@ function Index() {
           <div className="flex flex-col lg:flex-row gap-3 lg:gap-4 items-stretch w-full relative z-30">
 
             {/* From Input with Autocomplete */}
-            <AutocompleteInput 
-              value={from} 
-              onChange={setFrom} 
-              placeholder="Origin" 
-              icon={FiMapPin} 
+            <AutocompleteInput
+              value={from}
+              onChange={setFrom}
+              placeholder={t('hero.from')}
+              icon={FiMapPin}
               locations={locations}
               isOrigin={true}
             />
@@ -228,11 +508,11 @@ function Index() {
             </div>
 
             {/* To Input with Autocomplete */}
-            <AutocompleteInput 
-              value={to} 
-              onChange={setTo} 
-              placeholder="Destination" 
-              icon={FiMapPin} 
+            <AutocompleteInput
+              value={to}
+              onChange={setTo}
+              placeholder={t('hero.to')}
+              icon={FiMapPin}
               locations={locations}
               isOrigin={false}
             />
@@ -252,10 +532,10 @@ function Index() {
 
             {/* Find Tickets Button */}
             <div className="w-full lg:w-auto flex items-stretch mt-2 lg:mt-0">
-              <button 
+              <button
                 onClick={handleSearch}
                 className="w-full lg:w-auto px-10 py-4 bg-pink-500 hover:bg-pink-600 text-white font-black text-xl rounded-lg shadow-md transition-all uppercase tracking-wider transform hover:-translate-y-0.5 active:translate-y-0 whitespace-nowrap cursor-pointer">
-                Search
+                {t('hero.search')}
               </button>
             </div>
 
@@ -263,58 +543,8 @@ function Index() {
         </div>
       </div>
 
-      {/* Quick Guide Section (วิธีการใช้งานฉบับย่อ) */}
-      <div className="w-full bg-gray-50 flex flex-col items-center pt-20 pb-24 px-4 md:px-8 relative z-10">
-        <div className="w-full max-w-6xl flex flex-col gap-10">
-          
-          {/* Section Header */}
-          <div className="flex flex-col items-center text-center gap-2">
-            <span className="text-xs font-bold uppercase tracking-widest text-pink-600 bg-pink-50 px-3 py-1 rounded-full border border-pink-100">
-              User Guide
-            </span>
-            <h2 className="text-3xl md:text-4xl font-black text-[#241D4F]">
-              วิธีการใช้งานฉบับย่อ
-            </h2>
-            <p className="text-gray-500 text-sm md:text-base font-medium max-w-lg">
-              3 ขั้นตอนง่ายๆ ในการค้นหาข้อมูลและวางแผนการเดินทางด้วยรถโดยสาร บขส.
-            </p>
-          </div>
-
-          {/* 3 Step Cards Grid */}
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            {steps.map((item, idx) => {
-              const Icon = item.icon;
-              return (
-                <div
-                  key={idx}
-                  className="bg-white rounded-2xl p-7 border border-gray-200/80 shadow-sm hover:shadow-md hover:-translate-y-1 transition-all duration-200 flex flex-col gap-4 relative overflow-hidden"
-                >
-                  {/* Step Number Badge */}
-                  <div className="flex items-center justify-between">
-                    <div className={`w-12 h-12 rounded-xl flex items-center justify-center border ${item.badgeColor}`}>
-                      <Icon size={22} />
-                    </div>
-                    <span className="text-3xl font-black text-gray-200 tracking-tighter">
-                      {item.step}
-                    </span>
-                  </div>
-
-                  {/* Content */}
-                  <div className="flex flex-col gap-2">
-                    <h3 className="text-lg font-bold text-gray-900 leading-snug">
-                      {item.title}
-                    </h3>
-                    <p className="text-sm font-medium text-gray-500 leading-relaxed">
-                      {item.desc}
-                    </p>
-                  </div>
-                </div>
-              );
-            })}
-          </div>
-
-        </div>
-      </div>
+      <Guidebook />
+      
 
     </div>
   );

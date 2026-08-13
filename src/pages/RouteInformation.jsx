@@ -213,7 +213,7 @@ const StepperContent = ({ origin, originDetail, destination, destinationDetail, 
                   )}
                 </div>
                 <span className={`ri-step-tag ${stop.type}`}>
-                  {isStart ? 'จุดเริ่มต้น' : isEnd ? 'จุดหมายปลายทาง' : 'จุดแวะพัก'}
+                  {isStart ? 'จุดเริ่มต้น' : isEnd ? 'จุดหมายปลายทาง' : 'จุดรับ-จอด'}
                 </span>
               </div>
             </div>

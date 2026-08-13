@@ -34,7 +34,7 @@ function App() {
         <Route path="/search" element={<BusStops />} />
         <Route path="/help" element={<HelpSupport />} />
       </Routes>
-      <Navbar />
+      
     </>
   )
 }

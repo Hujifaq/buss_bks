@@ -1,33 +1,18 @@
 import React, { useState } from 'react';
 import { FiPhoneCall, FiExternalLink, FiHelpCircle, FiChevronDown, FiGlobe, FiMapPin, FiShield, FiMessageCircle } from 'react-icons/fi';
+import { useTranslation } from 'react-i18next';
 
 const BKS_CONTACT_URL = 'https://tcl99web.transport.co.th/contact-us/index';
 
 function HelpSupport() {
   const [openFaqIndex, setOpenFaqIndex] = useState(null);
+  const { t } = useTranslation();
 
   const toggleFaq = (index) => {
     setOpenFaqIndex(openFaqIndex === index ? null : index);
   };
 
-  const faqs = [
-    {
-      question: 'ขั้นตอนการจองตั๋วรถโดยสาร บขส. ออนไลน์',
-      answer: 'สามารถค้นหาเที่ยวรถและเลือกจุดหมายปลายทางได้ผ่านหน้าหลักของเว็บไซต์ หรือจองผ่านแอปพลิเคชัน BKS E-Ticket และเว็บไซต์หลักของ บขส.',
-    },
-    {
-      question: 'การยกเลิก คืนตั๋ว หรือเลื่อนวันเดินทาง',
-      answer: 'ต้องนำตั๋วโดยสารและบัตรประชาชนไปติดต่อที่ช่องจำหน่ายตั๋ว บขส. ณ สถานีขนส่งผู้โดยสาร ล่วงหน้าอย่างน้อย 3 ชั่วโมงก่อนเวลารถออก',
-    },
-    {
-      question: 'ข้อกำหนดสัมภาระติดตัว',
-      answer: 'ผู้โดยสารสามารถนำสัมภาระติดตัวได้ท่านละไม่เกิน 2 ชิ้น น้ำหนักรวมไม่เกิน 20 กิโลกรัม โดยไม่เสียค่าบริการเพิ่ม',
-    },
-    {
-      question: 'การติดตามสัมภาระสูญหาย',
-      answer: 'แจ้งศูนย์บริการลูกค้า Call Center 1490 ทันที โดยระบุหมายเลขสายรถและรอบเวลาเดินทาง',
-    },
-  ];
+  const faqs = t('help.faqs', { returnObjects: true });
 
   return (
     <div className="w-full min-h-screen bg-gray-50/60 py-8 px-4 sm:px-6 md:px-8">
@@ -49,11 +34,11 @@ function HelpSupport() {
               </div>
               <div className="flex flex-col">
                 <h1 className="text-xl sm:text-2xl font-black text-[#241D4F] tracking-tight">
-                  ศูนย์ช่วยเหลือและติดต่อสอบถาม
+                  {t('help.title')}
                 </h1>
                 <span className="text-xs font-bold text-pink-600 flex items-center gap-1.5 mt-0.5">
                   <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
-                  BKS Official Contact & Support Hub
+                  {t('help.subtitle')}
                 </span>
               </div>
             </div>
@@ -73,10 +58,10 @@ function HelpSupport() {
                 </div>
                 <div className="flex flex-col gap-0.5">
                   <span className="text-base font-bold text-[#241D4F]">
-                    ติดต่อ บริษัท ขนส่ง จำกัด (บขส.)
+                    {t('help.bksPortal')}
                   </span>
                   <span className="text-xs text-gray-500">
-                    ส่งเรื่องร้องเรียน สอบถามข้อมูล หรือแจ้งข้อเสนอแนะผ่านเว็บไซต์หลัก
+                    {t('help.bksPortalDesc')}
                   </span>
                 </div>
               </div>
@@ -88,7 +73,7 @@ function HelpSupport() {
                 className="inline-flex items-center justify-center gap-2 bg-[#241D4F] hover:bg-[#1a143b] text-white font-bold text-xs px-4 py-2.5 rounded-xl transition-all shadow-sm hover:scale-[1.02] cursor-pointer whitespace-nowrap"
               >
                 <FiGlobe size={14} className="text-pink-400" />
-                <span>ไปยังเว็บหลัก บขส.</span>
+                <span>{t('help.goToWebsite')}</span>
                 <FiExternalLink size={14} />
               </a>
             </div>
@@ -101,7 +86,7 @@ function HelpSupport() {
                 <FiPhoneCall size={16} />
               </div>
               <h2 className="text-base font-bold text-[#241D4F]">
-                สายด่วน & เบอร์ติดต่อหลัก
+                {t('help.hotline')}
               </h2>
             </div>
 
@@ -110,10 +95,10 @@ function HelpSupport() {
               <div className="py-3 flex items-center justify-between gap-4">
                 <div className="flex flex-col">
                   <span className="text-sm font-bold text-gray-900">
-                    Call Center บขส. (24 ชั่วโมง)
+                    {t('help.callCenter')}
                   </span>
                   <span className="text-xs text-gray-500">
-                    สอบถามตารางรถและเที่ยวรถทั่วประเทศ
+                    {t('help.callCenterDesc')}
                   </span>
                 </div>
 
@@ -122,7 +107,7 @@ function HelpSupport() {
                   className="inline-flex items-center gap-1.5 bg-gray-100 hover:bg-gray-200 text-[#241D4F] font-bold text-xs px-4 py-2 rounded-xl transition-colors cursor-pointer whitespace-nowrap"
                 >
                   <FiPhoneCall size={13} className="text-pink-500" />
-                  <span>โทร 1490</span>
+                  <span>{t('help.callBtn')} 1490</span>
                 </a>
               </div>
 
@@ -130,10 +115,10 @@ function HelpSupport() {
               <div className="py-3 flex items-center justify-between gap-4">
                 <div className="flex flex-col">
                   <span className="text-sm font-bold text-gray-900">
-                    สำนักงานใหญ่ บขส. (หมอชิต 2)
+                    {t('help.hq')}
                   </span>
                   <span className="text-xs text-gray-500">
-                    โทร 0-2936-2852 ถึง 66
+                    {t('help.hqDesc')}
                   </span>
                 </div>
 
@@ -142,7 +127,7 @@ function HelpSupport() {
                   className="inline-flex items-center gap-1.5 bg-gray-100 hover:bg-gray-200 text-[#241D4F] font-bold text-xs px-4 py-2 rounded-xl transition-colors cursor-pointer whitespace-nowrap"
                 >
                   <FiPhoneCall size={13} className="text-pink-500" />
-                  <span>โทรออก</span>
+                  <span>{t('help.callOut')}</span>
                 </a>
               </div>
             </div>
@@ -155,15 +140,15 @@ function HelpSupport() {
                 <FiMapPin size={16} />
               </div>
               <h2 className="text-base font-bold text-[#241D4F]">
-                เบอร์โทรศัพท์สถานีขนส่งผู้โดยสาร
+                {t('help.terminalsTitle')}
               </h2>
             </div>
 
             <div className="divide-y divide-gray-100">
               {[
-                { name: 'สถานีขนส่งผู้โดยสาร นครราชสีมา แห่งที่ 1 (บขส.เก่า)', phone: '044-242-899', tel: 'tel:044242899' },
-                { name: 'สถานีขนส่งผู้โดยสาร นครราชสีมา แห่งที่ 2 (บขส.ใหม่)', phone: '044-256-006', tel: 'tel:044256006' },
-                { name: 'สถานีขนส่งผู้โดยสาร กรุงเทพฯ (หมอชิต 2)', phone: '02-936-2841', tel: 'tel:029362841' },
+                { name: t('help.terminals.0.name'), phone: '044-242-899', tel: 'tel:044242899' },
+                { name: t('help.terminals.1.name'), phone: '044-256-006', tel: 'tel:044256006' },
+                { name: t('help.terminals.2.name'), phone: '02-936-2841', tel: 'tel:029362841' },
               ].map((item) => (
                 <div key={item.name} className="py-3 flex items-center justify-between gap-4">
                   <span className="text-xs sm:text-sm font-semibold text-gray-800">
@@ -188,7 +173,7 @@ function HelpSupport() {
                 <FiHelpCircle size={16} />
               </div>
               <h2 className="text-base font-bold text-[#241D4F]">
-                คำถามที่พบบ่อย (FAQ)
+                {t('help.faqTitle')}
               </h2>
             </div>
 
