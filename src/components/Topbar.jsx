@@ -5,8 +5,10 @@ import { IoMdClose } from 'react-icons/io';
 import { FaBus } from 'react-icons/fa';
 import gsap from 'gsap';
 import HamburgerMenu from './HamburgerMenu';
+import { useTranslation } from 'react-i18next';
 
 function Topbar() {
+  const { t, i18n } = useTranslation();
   const navigate = useNavigate();
   const [isSearchModalOpen, setIsSearchModalOpen] = useState(false);
   const [modalSearchQuery, setModalSearchQuery] = useState('');
@@ -14,6 +16,12 @@ function Topbar() {
   const [isLangDropdownOpen, setIsLangDropdownOpen] = useState(false);
   const [isDesktopMenuOpen, setIsDesktopMenuOpen] = useState(false);
   const [selectedLang, setSelectedLang] = useState('TH');
+
+  const switchLang = (code) => {
+    setSelectedLang(code);
+    i18n.changeLanguage(code === 'TH' ? 'th' : 'en');
+    setIsLangDropdownOpen(false);
+  };
 
   const chevronRef = useRef(null);
   const searchModalBgRef = useRef(null);
@@ -118,19 +126,19 @@ function Topbar() {
                 <div className="absolute top-10 left-0 bg-white shadow-xl rounded-xl border border-gray-100 w-28 py-2 z-50 flex flex-col animate-in fade-in zoom-in-95 duration-200">
                   <button
                     className="flex items-center gap-3 px-4 py-2 hover:bg-gray-50 text-sm text-gray-800 transition-colors font-medium"
-                    onClick={() => { setSelectedLang('TH'); setIsLangDropdownOpen(false); }}
+                    onClick={() => switchLang('TH')}
                   >
                     <div className="w-5 h-5 rounded-full border border-gray-200 shadow-sm flex-shrink-0" style={{ background: 'linear-gradient(to bottom, #ED1C24 16.6%, #ffffff 16.6%, #ffffff 33.3%, #241D4F 33.3%, #241D4F 66.6%, #ffffff 66.6%, #ffffff 83.3%, #ED1C24 83.3%)' }} />
-                    Thai
+                    {t('topbar.lang.th')}
                   </button>
                   <button
                     className="flex items-center gap-3 px-4 py-2 hover:bg-gray-50 text-sm text-gray-800 transition-colors font-medium"
-                    onClick={() => { setSelectedLang('EN'); setIsLangDropdownOpen(false); }}
+                    onClick={() => switchLang('EN')}
                   >
                     <div className="w-5 h-5 rounded-full border border-gray-200 shadow-sm flex-shrink-0 flex items-center justify-center">
                       <UKFlag />
                     </div>
-                    Eng
+                    {t('topbar.lang.en')}
                   </button>
                 </div>
               </>
@@ -153,18 +161,7 @@ function Topbar() {
           </div>
 
           <div className="flex items-center gap-3 text-black">
-            {/* Mobile Search Icon */}
-            <div 
-              className="w-9 h-9 md:hidden flex items-center justify-center rounded-xl bg-pink-50 hover:bg-pink-100 text-pink-500 transition-colors cursor-pointer"
-              onClick={() => {
-                setIsSearchModalOpen(true);
-                if (isDropdownOpen) setIsDropdownOpen(false);
-                if (isLangDropdownOpen) setIsLangDropdownOpen(false);
-              }}
-              title="Search"
-            >
-              <FiSearch size={20} />
-            </div>
+
             
             {/* Enhanced Hamburger Menu Component */}
             <HamburgerMenu
@@ -193,19 +190,19 @@ function Topbar() {
               <div className="w-12 h-12 bg-white rounded-full flex items-center justify-center shadow-sm">
                 <FaBus size={20} className="text-[#ff7a00]" />
               </div>
-              <span className="text-xs font-bold text-black">รถทัวร์</span>
+              <span className="text-xs font-bold text-black">{t('topbar.vehicleTypes.tour')}</span>
             </div>
 
             <div className="flex flex-col items-center gap-2">
               <div className="w-12 h-12 bg-white rounded-full flex items-center justify-center shadow-sm">
               </div>
-              <span className="text-xs font-bold text-black">รถตู้</span>
+              <span className="text-xs font-bold text-black">{t('topbar.vehicleTypes.van')}</span>
             </div>
 
             <div className="flex flex-col items-center gap-2">
               <div className="w-12 h-12 bg-white rounded-full flex items-center justify-center shadow-sm">
               </div>
-              <span className="text-xs font-bold text-black">รถสองแถว</span>
+              <span className="text-xs font-bold text-black">{t('topbar.vehicleTypes.songtaew')}</span>
             </div>
 
             <div className="flex flex-col items-center gap-2">
@@ -225,7 +222,7 @@ function Topbar() {
           <div ref={searchModalContentRef} className="flex flex-col h-full w-full max-w-md mx-auto">
             {/* Header */}
             <div className="flex items-center justify-between mb-6">
-              <h2 className="text-lg font-black tracking-tight text-gray-900">Search</h2>
+              <h2 className="text-lg font-black tracking-tight text-gray-900">{t('topbar.searchTitle')}</h2>
               <button
                 onClick={closeSearchModal}
                 className="p-2 rounded-full bg-[#ffe4eb] text-[#ff7a00] hover:scale-105 transition-transform"
@@ -253,7 +250,7 @@ function Topbar() {
                 autoFocus
                 value={modalSearchQuery}
                 onChange={(e) => setModalSearchQuery(e.target.value)}
-                placeholder="Where to? (Press Enter to search)"
+                placeholder={t('topbar.searchPlaceholder')}
                 className="w-full bg-gray-50 border-2 border-transparent text-gray-900 rounded-2xl py-4 pl-12 pr-4 text-lg font-medium placeholder-gray-400 outline-none transition-all shadow-sm focus:border-pink-300"
               />
             </form>

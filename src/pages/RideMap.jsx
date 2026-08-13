@@ -6,6 +6,7 @@ import {
   useMap,
   useMapsLibrary,
 } from '@vis.gl/react-google-maps';
+import { useTranslation } from 'react-i18next';
 
 const GOOGLE_MAPS_API_KEY = import.meta.env.VITE_GOOGLE_MAPS_API_KEY;
 
@@ -28,8 +29,8 @@ const MAP_STYLE = [
   { featureType: 'transit', stylers: [{ visibility: 'off' }] },
 ];
 
-const makeMarkerIconWithLabel = (color, text, type) => {
-  const prefix = type === 'start' ? 'ต้นทาง: ' : type === 'end' ? 'ปลายทาง: ' : '';
+const makeMarkerIconWithLabel = (color, text, type, t) => {
+  const prefix = type === 'start' ? t('map.origin') : type === 'end' ? t('map.dest') : '';
   const displayText = `${prefix}${text || ''}`.trim();
   const safeText = displayText.replace(/["'<>&]/g, '');
   
@@ -69,6 +70,7 @@ const RoutePolyline = ({ origin, destination, exactOrigin, exactDest }) => {
   const routesLibrary = useMapsLibrary('routes');
   const rendererRef = useRef(null);
   const [pins, setPins] = useState([]);
+  const { t } = useTranslation();
 
   useEffect(() => {
     if (!map || !routesLibrary || !origin || !destination) return;
@@ -138,7 +140,7 @@ const RoutePolyline = ({ origin, destination, exactOrigin, exactDest }) => {
   return (
     <>
       {pins.map((pin, i) => {
-        const iconConfig = makeMarkerIconWithLabel(pin.color, pin.title, pin.type);
+        const iconConfig = makeMarkerIconWithLabel(pin.color, pin.title, pin.type, t);
         return (
           <Marker
             key={i}

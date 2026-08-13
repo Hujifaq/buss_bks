@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useMemo, useRef } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 import { supabase } from '../lib/supabaseClient';
 import { FiSearch, FiX, FiChevronDown, FiMapPin, FiClock, FiNavigation, FiArrowRight, FiCheck } from 'react-icons/fi';
 import { FaBus } from 'react-icons/fa';
@@ -17,6 +18,7 @@ const fallbackPhotos = [
 
 function BusStops() {
   const navigate = useNavigate();
+  const { t, i18n } = useTranslation();
   const [searchParams, setSearchParams] = useSearchParams();
   const initialQuery = searchParams.get('q') || '';
 
@@ -107,17 +109,17 @@ function BusStops() {
       }
 
       // Determine Vehicle Type (AC / Fan / Minibus / Van)
-      let vehicleBadge = 'Bus (รถทัวร์)';
+      let vehicleBadge = t('ri.vehicleBus');
       let vType = route.vehicle_type || 'bus';
       
       if (vType === 'minibus') {
-        vehicleBadge = 'Minibus (รถสองแถว)';
+        vehicleBadge = t('ri.vehicleMinibus');
       } else if (vType === 'van') {
-        vehicleBadge = 'Van (รถตู้)';
+        vehicleBadge = t('ri.vehicleVan');
       } else if (route.fare_aircon_min_baht || route.fare_aircon_max_baht) {
-        vehicleBadge = 'AC (ปรับอากาศ)';
+        vehicleBadge = t('ri.vehicleAc');
       } else if (route.fare_fan_min_baht || route.fare_fan_max_baht) {
-        vehicleBadge = 'Fan (พัดลม)';
+        vehicleBadge = t('ri.vehicleFan');
       }
 
       // Format fare
@@ -134,20 +136,20 @@ function BusStops() {
         ...route,
         id: route.route_id || index,
         routeCode: route.route_code || `${index + 1}`,
-        title: thName || enName || `สาย ${route.route_code || ''}`,
+        title: (i18n.language === 'en' && enName) ? enName : thName || enName || `${t('busStops.card.line')} ${route.route_code || ''}`,
         origin: originName,
         destination: destName,
-        stopName: `จุดจอด: ${originName}`,
+        stopName: `${t('busStops.card.stop')} ${originName}`,
         vehicleTypeBadge: vehicleBadge,
         vType,
-        timeRange: route.departure_time_range_raw || '06.00 - 17.00 น.',
+        timeRange: route.departure_time_range_raw || '06.00 - 17.00',
         fare: fareDisplay,
         photo: photoUrl,
         company: route.company_name || 'BKS Transport',
         stopsVia: route.stops_via || '',
       };
     });
-  }, [routesData]);
+  }, [routesData, t, i18n.language]);
 
   // Multi-field search & category filtering
   const filteredRoutes = useMemo(() => {
@@ -219,7 +221,7 @@ function BusStops() {
                 onClick={() => setIsDropdownOpen(!isDropdownOpen)}
                 className="bg-gray-100 hover:bg-gray-200 text-gray-900 text-sm font-medium px-3.5 py-2 rounded-xl flex items-center gap-2 transition-colors cursor-pointer whitespace-nowrap"
               >
-                <span>{selectedOrigin && selectedOrigin !== 'All Origins' ? selectedOrigin : 'Start At'}</span>
+                <span>{selectedOrigin && selectedOrigin !== 'All Origins' ? selectedOrigin : t('busStops.filters.allOrigins')}</span>
                 <FiChevronDown size={16} className={`transition-transform ${isDropdownOpen ? 'rotate-180' : ''}`} />
               </button>
 
@@ -239,7 +241,7 @@ function BusStops() {
                           : 'text-gray-700'
                       }`}
                     >
-                      <span>{option}</span>
+                      <span>{option === 'All Origins' ? t('busStops.filters.allOrigins') : option}</span>
                       {(selectedOrigin === option || (!selectedOrigin && option === 'All Origins')) && (
                         <FiCheck size={16} className="text-gray-800" />
                       )}
@@ -255,7 +257,7 @@ function BusStops() {
               type="text"
               value={searchQuery}
               onChange={(e) => handleSearchChange(e.target.value)}
-              placeholder="Search by bus stop, route number, destination, or company..."
+              placeholder={t('busStops.searchPlaceholder')}
               className="flex-1 bg-transparent text-gray-900 placeholder-gray-400 text-sm md:text-base font-normal outline-none py-1"
             />
 
@@ -273,10 +275,10 @@ function BusStops() {
           {/* Vehicle Category Filter Pills */}
           <div className="flex items-center gap-2 overflow-x-auto pb-1 scrollbar-none">
             {[
-              { id: 'all', label: 'All Vehicles' },
-              { id: 'minibus', label: 'Minibus (รถสองแถว)' },
-              { id: 'van', label: 'Van (รถตู้)' },
-              { id: 'bus', label: 'Bus (รถทัวร์)' },
+              { id: 'all', label: t('busStops.filters.all') },
+              { id: 'minibus', label: t('busStops.filters.minibus') },
+              { id: 'van', label: t('busStops.filters.van') },
+              { id: 'bus', label: t('busStops.filters.bus') },
             ].map((filter) => {
               const isSelected = selectedVehicleFilter === filter.id;
               return (
@@ -299,7 +301,7 @@ function BusStops() {
         {/* Header Results Info */}
         <div className="flex items-center justify-between px-1 mt-2">
           <h1 className="text-base font-bold text-gray-900">
-            {searchQuery ? `Search results for "${searchQuery}"` : 'Bus Stops & Available Routes'}
+            {searchQuery ? `"${searchQuery}"` : t('busStops.title')}
           </h1>
           <span className="text-xs font-medium text-gray-500">
             {filteredRoutes.length} {filteredRoutes.length === 1 ? 'route' : 'routes'} found
@@ -310,7 +312,7 @@ function BusStops() {
         {filteredRoutes.length === 0 ? (
           <div className="w-full bg-white rounded-2xl border border-gray-200 p-12 text-center flex flex-col items-center justify-center gap-3 shadow-sm">
             <FaBus size={36} className="text-gray-300" />
-            <h3 className="text-base font-bold text-gray-800">No matching routes or bus stops found</h3>
+            <h3 className="text-base font-bold text-gray-800">{t('busStops.noResult')}</h3>
             <p className="text-xs text-gray-500 max-w-sm">
               Try checking your search spelling, choosing a different origin, or selecting all vehicle types.
             </p>
@@ -341,7 +343,7 @@ function BusStops() {
                   </span>
                   {card.route_code && (
                     <span className="absolute bottom-3 left-3 bg-[#241D4F] text-white text-[11px] font-bold px-2.5 py-1 rounded-lg shadow-sm">
-                      Line {card.routeCode}
+                      {t('busStops.card.line')} {card.routeCode}
                     </span>
                   )}
                 </div>

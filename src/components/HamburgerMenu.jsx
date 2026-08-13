@@ -1,35 +1,38 @@
 import React from 'react';
+import { useTranslation } from 'react-i18next';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { FiHome, FiMap, FiSearch, FiHelpCircle, FiChevronRight, FiX } from 'react-icons/fi';
 import { FaBus } from 'react-icons/fa';
+import { RxHamburgerMenu } from 'react-icons/rx';
 
 function HamburgerMenu({ isOpen, setIsOpen }) {
   const navigate = useNavigate();
   const location = useLocation();
+  const { t } = useTranslation();
 
   const menuItems = [
     {
       id: 'home',
-      label: 'Home',
+      label: t('menu.home'),
       path: '/',
       icon: FiHome,
     },
     {
       id: 'bus-stops',
-      label: 'Bus Stops',
+      label: t('menu.busStops'),
       path: '/bus-stops',
       icon: FaBus,
     },
     {
       id: 'route-info',
-      label: 'Route Information',
+      label: t('menu.routeInfo'),
       path: '/route-information',
       icon: FiMap,
     },
     {
       id: 'help',
-      label: 'Help & Support',
+      label: t('menu.help'),
       path: '/help',
       icon: FiHelpCircle,
     },
@@ -49,28 +52,11 @@ function HamburgerMenu({ isOpen, setIsOpen }) {
       {/* Clean & Minimalist Hamburger Trigger Button */}
       <button
         onClick={() => setIsOpen(!isOpen)}
-        className="relative z-50 w-9 h-9 rounded-xl bg-white hover:bg-gray-100 border border-gray-200 text-gray-800 flex flex-col items-center justify-center gap-[5px] cursor-pointer focus:outline-none transition-colors duration-150 shadow-sm"
+        className="relative z-50 w-9 h-9 rounded-xl bg-white hover:bg-gray-100 border border-gray-200 text-gray-800 flex items-center justify-center cursor-pointer focus:outline-none transition-colors duration-150 shadow-sm"
         aria-label={isOpen ? "Close Menu" : "Open Menu"}
         title={isOpen ? "Close Menu" : "Open Menu"}
       >
-        {/* Bar 1 */}
-        <motion.span
-          animate={isOpen ? { rotate: 45, y: 6.5, width: "16px" } : { rotate: 0, y: 0, width: "16px" }}
-          transition={{ duration: 0.2, ease: "easeInOut" }}
-          className="h-[1.5px] bg-gray-800 rounded-full block origin-center"
-        />
-        {/* Bar 2 */}
-        <motion.span
-          animate={isOpen ? { opacity: 0, scale: 0 } : { opacity: 1, scale: 1, width: "16px" }}
-          transition={{ duration: 0.15 }}
-          className="h-[1.5px] bg-gray-800 rounded-full block"
-        />
-        {/* Bar 3 */}
-        <motion.span
-          animate={isOpen ? { rotate: -45, y: -6.5, width: "16px" } : { rotate: 0, y: 0, width: "16px" }}
-          transition={{ duration: 0.2, ease: "easeInOut" }}
-          className="h-[1.5px] bg-gray-800 rounded-full block origin-center"
-        />
+        {isOpen ? <FiX size={20} /> : <RxHamburgerMenu size={20} />}
       </button>
 
       {/* Backdrop & Drawer Portal */}
@@ -106,7 +92,7 @@ function HamburgerMenu({ isOpen, setIsOpen }) {
                       className="h-8 w-auto object-contain"
                     />
                     <span className="text-base font-bold text-gray-900">
-                      Menu
+                      {t('menu.title')}
                     </span>
                   </div>
                 </div>
