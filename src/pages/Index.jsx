@@ -1,41 +1,8 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { FiMapPin, FiCalendar } from 'react-icons/fi';
-import { FaExchangeAlt } from 'react-icons/fa';
-import { Swiper, SwiperSlide } from 'swiper/react';
-import { Pagination, Autoplay } from 'swiper/modules';
+import { FiMapPin, FiCalendar, FiSearch, FiClock, FiCheckCircle } from 'react-icons/fi';
+import { FaExchangeAlt, FaBus } from 'react-icons/fa';
 import { useNavigate } from 'react-router-dom';
 import { supabase } from '../lib/supabaseClient';
-
-// Import Swiper styles
-import 'swiper/css';
-import 'swiper/css/pagination';
-
-const newsData = [
-  {
-    id: 1,
-    title: "ขั้นตอนการจองตั๋ว BKS ผ่านช่องทางเว็บไซต์ ง่ายๆ จ่ายได้สะดวก สบาย",
-    date: "09 มิถุนายน 2569 00:00 น.",
-    image: "https://tcl99web.transport.co.th/file/download/?s=kn7eDDhCGNaBznjEHLyybGlvYb5nucXqYgxxDxmOwcjQEMgUrLshJ3ts2gDlh6V_Xfp2vjQcTLfTHoAruYFFwi4fWucYS0-XCholEV92sxSeKhctxB0Eu3nT0myfvDpvqj57TrrTsVduG4V965lXRstMev5MDQTlf_3BtuAt4RC9mXvhJsAPWdxK7q4vVR1TfGhd7LQVhjscrNd-lV7-BTyfjJpB9yVS1lvMFe42YIEwC8rBZca6bZLQUOdvH_HJ-mfGvmvrjcsN2elXy65S2jGWQnbhqHo%3D&ref=MNySeW_VrFl76B2G8Uj5iXjfWc82QxK3S6G9IiFdTyjWqFcpcdr-7TJsgZ_bHbE2og41_v0zVi54V4EHNeOB4a8jfo6WyBQq4uFJ",
-    excerpt: "1.ขั้นตอนการจองตั๋ว เลือกรุปแบบการเดินทาง เลือกต้นทาง-ปลายทางที่ต้องการไป...",
-    link: "https://tcl99web.transport.co.th/announce/announceSearch/announceDetail?newsId=145"
-  },
-  {
-    id: 2,
-    title: "ซื้อตั๋วโดยสารผ่านแอปพลิเคชัน 'BKS E-Ticket' รับส่วนลด 20%",
-    date: "11 สิงหาคม 2569 00:00 น.",
-    image: "https://tcl99web.transport.co.th/file/download/?s=X9ArinU9jpjm4WAR_-81EVgKtV5ekaoaSPV29_2FudisHoA_It2EKGGSwqyX7jT7UhFvcLkjxTTYLS3wsx8aelclyHsR0Tj1I6VVW5Q86uBxbgly2yVTqFunCYobWqVRJIp9PYOa0Wd8WZmeB9PAq6_zJ7lxCc3mSu3b19rjI0D9-0tuzmGqLlJIdOefdMLW2443rhLr01tUe4WNB6cCoPwjzJhBAwwqNIC4EQzp-n76dXrp3jVTBHwr3z2oqSdu8YmB3WAUy6MK_VKzRR7t3fNYkNIBI5n1Ga_c&ref=PabaKXXRkLW96a-yZXqAtbMXMoV4_XLfUuwyWagJfXNziXzEDDMCY2WiLewsqPjHJRDsXDlcsNt5z3m0YD6JMHpSUM_lSyz1QJ-sRA==",
-    excerpt: "จองง่าย ประหยัดกว่า กับ BKS E-Ticket สำหรับเงื่อนไขการใช้สิทธิ์.....",
-    link: "https://tcl99web.transport.co.th/announce/announceSearch/announceDetail?newsId=162"
-  },
-  {
-    id: 3,
-    title: "พาแม่เที่ยว พาแม่ช้อป เติมความสุขให้คนพิเศษ 'BKS' ส่งโปรสุดคุ้มต้อนรับ วันแม่",
-    date: "07 สิงหาคม 2569 00:00 น.",
-    image: "https://tcl99web.transport.co.th/file/download/?s=VhxGMM_V5FEBtlR-ArEgU3p_pZm9AD6NgLSMYqnjJtP2KrDiUCVCpfTy81nqtE81Kvf7XxABpPAitROaGTQGJfF8s1qgOguqxZ14_OUH3eUQcSxE4HrEWomaRxAtEemiKlzL7zUaIRDO33eCFsj0AtaevPhgUEsKxPkJ_JpyzuXjNq53oyjqcPuWfbrbBmq5HC3WMtpFuk5vOm4qS5zgNekIcIA-MqjoLmGBWsrXcNjadUWOW1igux-MeWSSSGhgxpMaUUk4_0l-QLCPyKGAB2GCHptGlac%3D&ref=x58KfW1GzH92g-Sktmu_Fr_VyJF7KWMuOqDBUuzjy2xkM_bvzhZK-F6TmxG87H5wa_miQlF5wO_d6LBj63kpzU6uzSecdVusM2Q4",
-    excerpt: "เพียงซื้อตั๋วผ่านช่องทางออนไลน์ รับส่วนลดค่าโดยสาร 5% พร้อมรับแต้ม X2...",
-    link: "https://tcl99web.transport.co.th/announce/announceSearch/announceDetail?newsId=161"
-  }
-];
 
 const AutocompleteInput = ({ value, onChange, placeholder, icon: Icon, locations, isOrigin }) => {
   const [isOpen, setIsOpen] = useState(false);
@@ -110,7 +77,6 @@ function Index() {
           const locMap = new Map();
           
           data.forEach(r => {
-            
             const thParts = (r.route_name_th || '').split(/\s*[-–—_:|]\s*/).map(s => s.trim()).filter(Boolean);
             const enParts = (r.route_name_en || '').split(/\s*[-–—_:|]\s*/).map(s => s.trim()).filter(Boolean);
             
@@ -145,12 +111,9 @@ function Index() {
             }
           });
           
-          // Sort alphabetically by Thai name
           const sortedLocs = Array.from(locMap.values()).sort((a, b) => a.value.localeCompare(b.value));
-          console.log('[Index.jsx] Fetched distinct locations:', sortedLocs);
           
           if (sortedLocs.length === 0) {
-             console.log('[Index.jsx] Fallback triggered due to empty parse');
              setLocations([
                { value: 'นครราชสีมา', enValue: 'Nakhon Ratchasima', searchString: 'นครราชสีมา nakhon ratchasima' },
                { value: 'กรุงเทพฯ', enValue: 'Bangkok', searchString: 'กรุงเทพฯ bangkok' },
@@ -187,6 +150,30 @@ function Index() {
     }
   };
 
+  const steps = [
+    {
+      step: '01',
+      title: 'เลือกต้นทางและปลายทาง',
+      desc: 'ระบุจุดเริ่มต้นและสถานที่ปลายทางที่ต้องการเดินทาง หรือเลือกจากรายการจุดจอดสถานีขนส่ง',
+      icon: FiMapPin,
+      badgeColor: 'bg-pink-50 text-pink-600 border-pink-100',
+    },
+    {
+      step: '02',
+      title: 'ค้นหาเส้นทางและตารางเวลา',
+      desc: 'ตรวจสอบรอบเวลาเดินรถ ราคาค่าโดยสาร ประเภทรถ (รถทัวร์/รถตู้/สองแถว) และจุดแวะพักระหว่างทาง',
+      icon: FaBus,
+      badgeColor: 'bg-indigo-50 text-indigo-600 border-indigo-100',
+    },
+    {
+      step: '03',
+      title: 'ดูแผนที่และเริ่มเดินทาง',
+      desc: 'ดูเส้นทางจำลองบนแผนที่เพื่อเตรียมตัวเดินทางไปยังสถานีขนส่งหรือจุดจอดได้อย่างแม่นยำ',
+      icon: FiCheckCircle,
+      badgeColor: 'bg-orange-50 text-orange-600 border-orange-100',
+    },
+  ];
+
   return (
     <div className="min-h-screen bg-gray-50 flex flex-col w-full overflow-x-hidden">
 
@@ -194,9 +181,9 @@ function Index() {
       <div
         className="relative w-full h-[60vh] min-h-[400px] flex flex-col items-center justify-end pb-24 md:pb-20"
         style={{
-          backgroundImage: 'url("/src/assets/bg-bks.jpg")',
+          backgroundImage: 'url("https://images.unsplash.com/photo-1572675339312-3e8b094a544d?q=80&w=1170&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D")',
           backgroundSize: 'cover',
-          backgroundPosition: 'center 80%',
+          backgroundPosition: 'center',
         }}
       >
         {/* Dark Gradient Overlay for text readability */}
@@ -233,7 +220,7 @@ function Index() {
             <div className="hidden lg:flex items-center justify-center">
               <button
                 onClick={handleSwap}
-                className="p-3 text-gray-400  hover:bg-[#ffe4eb] rounded-full transition-colors shadow-sm border border-gray-200 bg-white cursor-pointer"
+                className="p-3 text-gray-400 hover:bg-[#ffe4eb] rounded-full transition-colors shadow-sm border border-gray-200 bg-white cursor-pointer"
                 title="Swap locations"
               >
                 <FaExchangeAlt size={16} />
@@ -259,7 +246,7 @@ function Index() {
                 type="time"
                 value={time}
                 onChange={(e) => setTime(e.target.value)}
-                className="w-full bg-gray-50 border border-gray-200 rounded-lg pl-11 pr-4 py-4 text-gray-800 focus:outline-none  focus:bg-white transition-all font-medium text-lg h-full cursor-pointer"
+                className="w-full bg-gray-50 border border-gray-200 rounded-lg pl-11 pr-4 py-4 text-gray-800 focus:outline-none focus:bg-white transition-all font-medium text-lg h-full cursor-pointer"
               />
             </div>
 
@@ -276,51 +263,56 @@ function Index() {
         </div>
       </div>
 
-      {/* News Section using Swiper */}
-      <div className="w-full bg-gray-50 flex flex-col items-center pt-24 pb-24 px-4 md:px-8 relative z-10">
-        <div className="w-full max-w-6xl flex flex-col gap-8">
-          <div className="flex justify-between items-end border-b border-gray-200 pb-4">
-            <h2 className="text-3xl md:text-4xl font-black text-[#241D4F]">Latest News</h2>
+      {/* Quick Guide Section (วิธีการใช้งานฉบับย่อ) */}
+      <div className="w-full bg-gray-50 flex flex-col items-center pt-20 pb-24 px-4 md:px-8 relative z-10">
+        <div className="w-full max-w-6xl flex flex-col gap-10">
+          
+          {/* Section Header */}
+          <div className="flex flex-col items-center text-center gap-2">
+            <span className="text-xs font-bold uppercase tracking-widest text-pink-600 bg-pink-50 px-3 py-1 rounded-full border border-pink-100">
+              User Guide
+            </span>
+            <h2 className="text-3xl md:text-4xl font-black text-[#241D4F]">
+              วิธีการใช้งานฉบับย่อ
+            </h2>
+            <p className="text-gray-500 text-sm md:text-base font-medium max-w-lg">
+              3 ขั้นตอนง่ายๆ ในการค้นหาข้อมูลและวางแผนการเดินทางด้วยรถโดยสาร บขส.
+            </p>
           </div>
 
-          <Swiper
-            modules={[Pagination, Autoplay]}
-            spaceBetween={24}
-            slidesPerView={1}
-            pagination={{ clickable: true, dynamicBullets: true }}
-            autoplay={{ delay: 5000, disableOnInteraction: false }}
-            breakpoints={{
-              640: { slidesPerView: 2 },
-              1024: { slidesPerView: 3 },
-            }}
-            className="w-full pb-16 pt-2"
-            style={{
-              '--swiper-pagination-color': '#ec4899', 
-              '--swiper-pagination-bullet-inactive-color': '#d1d5db',
-              '--swiper-pagination-bullet-inactive-opacity': '0.5'
-            }}
-          >
-            {newsData.map(news => (
-              <SwiperSlide key={news.id} className="h-auto">
-                <a href={news.link} className="bg-white rounded-2xl w-full border border-gray-100 overflow-hidden h-full flex flex-col my-6 cursor-pointer block hover:scale-102 transition-all duration-200">
-                  <div className="h-52 w-full overflow-hidden relative">
-                    <img src={news.image} alt={news.title} className="w-full h-full object-cover" />
-                  </div>
-                  <div className="p-6 flex flex-col flex-1">
-                    <h3 className="text-lg md:text-xl font-bold text-[#241D4F] mb-3 leading-snug line-clamp-2">{news.title}</h3>
-                    <p className="text-gray-500 line-clamp-3 text-sm flex-1 font-medium mb-4">{news.excerpt}</p>
-
-                    <div className="flex items-center gap-2 mt-auto">
-                      <div className="w-4 h-4 rounded-full bg-pink-500 text-white flex items-center justify-center font-bold text-[10px]">
-                        L
-                      </div>
-                      <span className="text-xs font-medium text-gray-400">{news.date}</span>
+          {/* 3 Step Cards Grid */}
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+            {steps.map((item, idx) => {
+              const Icon = item.icon;
+              return (
+                <div
+                  key={idx}
+                  className="bg-white rounded-2xl p-7 border border-gray-200/80 shadow-sm hover:shadow-md hover:-translate-y-1 transition-all duration-200 flex flex-col gap-4 relative overflow-hidden"
+                >
+                  {/* Step Number Badge */}
+                  <div className="flex items-center justify-between">
+                    <div className={`w-12 h-12 rounded-xl flex items-center justify-center border ${item.badgeColor}`}>
+                      <Icon size={22} />
                     </div>
+                    <span className="text-3xl font-black text-gray-200 tracking-tighter">
+                      {item.step}
+                    </span>
                   </div>
-                </a>
-              </SwiperSlide>
-            ))}
-          </Swiper>
+
+                  {/* Content */}
+                  <div className="flex flex-col gap-2">
+                    <h3 className="text-lg font-bold text-gray-900 leading-snug">
+                      {item.title}
+                    </h3>
+                    <p className="text-sm font-medium text-gray-500 leading-relaxed">
+                      {item.desc}
+                    </p>
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+
         </div>
       </div>
 

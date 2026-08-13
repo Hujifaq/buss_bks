@@ -1,11 +1,15 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { FiSearch, FiChevronDown, FiMapPin, FiClock, FiMenu } from 'react-icons/fi';
+import { useNavigate } from 'react-router-dom';
+import { FiSearch, FiChevronDown, FiMapPin, FiClock } from 'react-icons/fi';
 import { IoMdClose } from 'react-icons/io';
 import { FaBus } from 'react-icons/fa';
 import gsap from 'gsap';
+import HamburgerMenu from './HamburgerMenu';
 
 function Topbar() {
+  const navigate = useNavigate();
   const [isSearchModalOpen, setIsSearchModalOpen] = useState(false);
+  const [modalSearchQuery, setModalSearchQuery] = useState('');
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const [isLangDropdownOpen, setIsLangDropdownOpen] = useState(false);
   const [isDesktopMenuOpen, setIsDesktopMenuOpen] = useState(false);
@@ -148,30 +152,34 @@ function Topbar() {
             </div>
           </div>
 
-          <div className="flex items-center justify-center cursor-pointer text-black">
+          <div className="flex items-center gap-3 text-black">
             {/* Mobile Search Icon */}
             <div 
-              className="w-8 h-8 md:hidden flex items-center justify-center"
+              className="w-9 h-9 md:hidden flex items-center justify-center rounded-xl bg-pink-50 hover:bg-pink-100 text-pink-500 transition-colors cursor-pointer"
               onClick={() => {
                 setIsSearchModalOpen(true);
                 if (isDropdownOpen) setIsDropdownOpen(false);
                 if (isLangDropdownOpen) setIsLangDropdownOpen(false);
               }}
+              title="Search"
             >
-              <FiSearch size={22} />
+              <FiSearch size={20} />
             </div>
             
-            {/* Desktop Hamburger Icon */}
-            <div 
-              className="hidden md:flex w-8 h-8 items-center justify-center"
-              onClick={() => {
-                setIsDesktopMenuOpen(!isDesktopMenuOpen);
-                if (isDropdownOpen) setIsDropdownOpen(false);
-                if (isLangDropdownOpen) setIsLangDropdownOpen(false);
+            {/* Enhanced Hamburger Menu Component */}
+            <HamburgerMenu
+              isOpen={isDesktopMenuOpen}
+              setIsOpen={(val) => {
+                setIsDesktopMenuOpen(val);
+                if (val) {
+                  if (isDropdownOpen) setIsDropdownOpen(false);
+                  if (isLangDropdownOpen) setIsLangDropdownOpen(false);
+                }
               }}
-            >
-              {isDesktopMenuOpen ? <IoMdClose size={26} /> : <FiMenu size={26} />}
-            </div>
+              onOpenSearchModal={() => {
+                setIsSearchModalOpen(true);
+              }}
+            />
           </div>
         </div>
 
@@ -227,17 +235,28 @@ function Topbar() {
             </div>
 
             {/* Search Input */}
-            <div className="relative mb-8">
+            <form
+              onSubmit={(e) => {
+                e.preventDefault();
+                if (modalSearchQuery.trim()) {
+                  closeSearchModal();
+                  navigate(`/bus-stops?q=${encodeURIComponent(modalSearchQuery.trim())}`);
+                }
+              }}
+              className="relative mb-8"
+            >
               <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
                 <FiSearch className="text-[#ff7a00]" size={22} />
               </div>
               <input
                 type="text"
                 autoFocus
-                placeholder="Where to?"
-                className="w-full bg-gray-50 border-2 border-transparent text-gray-900 rounded-2xl py-4 pl-12 pr-4 text-lg font-medium placeholder-gray-400 outline-none transition-all shadow-sm"
+                value={modalSearchQuery}
+                onChange={(e) => setModalSearchQuery(e.target.value)}
+                placeholder="Where to? (Press Enter to search)"
+                className="w-full bg-gray-50 border-2 border-transparent text-gray-900 rounded-2xl py-4 pl-12 pr-4 text-lg font-medium placeholder-gray-400 outline-none transition-all shadow-sm focus:border-pink-300"
               />
-            </div>
+            </form>
 
 
 
@@ -245,28 +264,7 @@ function Topbar() {
         </div>
       )}
 
-      {/* Desktop Simple Sidebar Menu */}
-      {isDesktopMenuOpen && (
-        <div className="hidden md:flex fixed top-[72px] right-0 h-[calc(100vh-72px)] w-80 bg-white shadow-[-10px_0_30px_rgba(0,0,0,0.1)] z-40 flex-col py-8 px-8 border-l border-gray-100">
-           <div className="flex flex-col gap-8">
-              <a href="/" className="text-2xl font-black text-[#241D4F] hover:text-pink-500 transition-colors">
-                Home
-              </a>
-              <a href="/bus-stops" className="text-2xl font-black text-[#241D4F] hover:text-pink-500 transition-colors">
-                Bus Stops
-              </a>
-              <button 
-                onClick={() => {
-                  setIsDesktopMenuOpen(false);
-                  setIsSearchModalOpen(true);
-                }} 
-                className="text-left text-2xl font-black text-[#241D4F] hover:text-pink-500 transition-colors"
-              >
-                Search
-              </button>
-           </div>
-        </div>
-      )}
+
     </>
   );
 }

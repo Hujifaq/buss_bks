@@ -28,15 +28,41 @@ const MAP_STYLE = [
   { featureType: 'transit', stylers: [{ visibility: 'off' }] },
 ];
 
-const makeMarkerIcon = (color) =>
-  'data:image/svg+xml;charset=UTF-8,' +
-  encodeURIComponent(`
-    <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 28 28">
-      <circle cx="14" cy="14" r="10" fill="${color}" fill-opacity="0.3"/>
-      <circle cx="14" cy="14" r="6" fill="${color}"/>
-      <circle cx="14" cy="14" r="3" fill="white"/>
+const makeMarkerIconWithLabel = (color, text, type) => {
+  const prefix = type === 'start' ? 'ต้นทาง: ' : type === 'end' ? 'ปลายทาง: ' : '';
+  const displayText = `${prefix}${text || ''}`.trim();
+  const safeText = displayText.replace(/["'<>&]/g, '');
+  
+  // Calculate SVG badge width dynamically based on text length
+  const textWidth = Math.max(90, safeText.length * 8.5 + 24);
+  const totalWidth = textWidth + 20;
+  const centerX = totalWidth / 2;
+
+  const svg = `
+    <svg xmlns="http://www.w3.org/2000/svg" width="${totalWidth}" height="54" viewBox="0 0 ${totalWidth} 54">
+      <defs>
+        <filter id="shadow" x="-10%" y="-10%" width="120%" height="120%">
+          <feDropShadow dx="0" dy="2" stdDeviation="3" flood-color="#000000" flood-opacity="0.4"/>
+        </filter>
+      </defs>
+      <!-- Label Badge Pill -->
+      <rect x="10" y="4" width="${textWidth}" height="24" rx="12" fill="#111827" fill-opacity="0.95" stroke="${color}" stroke-width="2" filter="url(#shadow)"/>
+      <text x="${centerX}" y="20" fill="#ffffff" font-size="11" font-weight="700" font-family="system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" text-anchor="middle">${safeText}</text>
+      <!-- Small Pointer Arrow -->
+      <polygon points="${centerX - 5},28 ${centerX + 5},28 ${centerX},34" fill="${color}" />
+      <!-- Pin Dot Anchor -->
+      <circle cx="${centerX}" cy="42" r="9" fill="${color}" fill-opacity="0.35"/>
+      <circle cx="${centerX}" cy="42" r="6" fill="${color}"/>
+      <circle cx="${centerX}" cy="42" r="2.5" fill="#ffffff"/>
     </svg>
-  `);
+  `;
+
+  return {
+    url: 'data:image/svg+xml;charset=UTF-8,' + encodeURIComponent(svg),
+    scaledSize: { width: totalWidth, height: 54 },
+    anchor: { x: centerX, y: 42 }
+  };
+};
 
 const RoutePolyline = ({ origin, destination, exactOrigin, exactDest }) => {
   const map = useMap();
@@ -85,12 +111,14 @@ const RoutePolyline = ({ origin, destination, exactOrigin, exactDest }) => {
                 lng: leg.start_location.lng(),
                 color: '#FF4D85',
                 title: origin,
+                type: 'start',
               },
               {
                 lat: leg.end_location.lat(),
                 lng: leg.end_location.lng(),
                 color: '#FF6B00',
                 title: destination,
+                type: 'end',
               },
             ]);
           }
@@ -109,19 +137,18 @@ const RoutePolyline = ({ origin, destination, exactOrigin, exactDest }) => {
 
   return (
     <>
-      {pins.map((pin, i) => (
-        <Marker
-          key={i}
-          position={{ lat: pin.lat, lng: pin.lng }}
-          title={pin.title}
-          clickable={false}
-          icon={{
-            url: makeMarkerIcon(pin.color),
-            scaledSize: { width: 28, height: 28 },
-            anchor: { x: 14, y: 14 },
-          }}
-        />
-      ))}
+      {pins.map((pin, i) => {
+        const iconConfig = makeMarkerIconWithLabel(pin.color, pin.title, pin.type);
+        return (
+          <Marker
+            key={i}
+            position={{ lat: pin.lat, lng: pin.lng }}
+            title={pin.title}
+            clickable={false}
+            icon={iconConfig}
+          />
+        );
+      })}
     </>
   );
 };
