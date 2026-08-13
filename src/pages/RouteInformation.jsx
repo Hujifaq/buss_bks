@@ -37,7 +37,7 @@ const StepperContent = ({ origin, originDetail, destination, destinationDetail, 
                   )}
                 </h3>
                 <p className="ri-step-subtitle">
-                  {isStart ? 'จุดเริ่มต้น' : isEnd ? 'จุดหมายปลายทาง' : 'จุดแวะพัก'}
+                  {isStart ? 'จุดเริ่มต้น' : isEnd ? 'จุดหมายปลายทาง' : 'จุดรับ-จอด'}
                 </p>
               </div>
             </div>
