@@ -154,9 +154,9 @@ function Topbar() {
           >
             <img src="/src/assets/logo_bks.png" alt="BKS Logo" className="h-20 w-auto object-contain" />
             <div className="w-4 h-4 mt-3 rounded-full bg-gray-200 flex items-center justify-center text-gray-600">
-              <div ref={chevronRef} className="flex items-center justify-center">
+              {/* <div ref={chevronRef} className="flex items-center justify-center">
                 <FiChevronDown size={14} />
-              </div>
+              </div> */}
             </div>
           </div>
 
@@ -181,7 +181,7 @@ function Topbar() {
         </div>
 
         {/* Dropdown Menu */}
-        <div
+        {/* <div
           className={`bg-[#ffe4eb] w-full overflow-hidden transition-all duration-300 ease-in-out ${isDropdownOpen ? 'max-h-40 opacity-100 pb-6' : 'max-h-0 opacity-0'
             }`}
         >
@@ -210,7 +210,7 @@ function Topbar() {
               </div>
             </div>
           </div>
-        </div>
+        </div> */}
       </div>
 
       {/* Search Modal */}
