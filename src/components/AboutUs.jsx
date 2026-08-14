@@ -53,7 +53,7 @@ const AboutUs = () => {
 
       {/* ScrollExpand Section for "What is this site?" */}
       <ScrollExpand
-        src="https://images.unsplash.com/photo-1544620347-c4fd4a3d5957?q=80&w=3538&auto=format&fit=crop"
+        src="/src/assets/bg_2.jpg"
         alt="Bus journey"
         title={t('about.mission.title')}
         scrollHint="Scroll to expand"
