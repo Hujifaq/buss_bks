@@ -97,7 +97,7 @@ const resources = {
           {
             name: 'DEV THREE',
             role: 'Kadsan Supphaakkarhasophon',
-            contact: 'kadsan.sup@mail.kmutt.ac.th'
+            contact: 'kadsan.supp@mail.kmutt.ac.th'
           },
           {
             name: 'DEV FOUR',
