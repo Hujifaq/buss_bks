@@ -292,27 +292,27 @@ const resources = {
         members: [
           {
             name: 'DEV ONE',
-            role: 'FULL-STACK DEVELOPER',
-            desc: '"Responsible for end-to-end development, ensuring the best and smoothest user experience."',
-            contact: 'dev1@kmutt.ac.th'
+            role: 'Palise Watanaviso',
+           
+            contact: 'palise.wata@mail.kmutt.ac.th'
           },
           {
             name: 'DEV TWO',
-            role: 'UI/UX DESIGNER',
-            desc: '"Designing intuitive, beautiful interfaces that meet the needs of all user groups."',
-            contact: 'dev2@kmutt.ac.th'
+            role: 'Nanthanat Charoensuk',
+           
+            contact: 'nanthanat.char@mail.kmutt.ac.th'
           },
           {
             name: 'DEV THREE',
-            role: 'BACKEND ENGINEER',
-            desc: '"Maintaining databases and APIs for accurate and lightning-fast route processing."',
-            contact: 'dev3@kmutt.ac.th'
+            role: 'Kadsan Supphaakkarhasophon',
+          
+            contact: 'kadsan.supp@mail.kmutt.ac.th'
           },
           {
             name: 'DEV FOUR',
-            role: 'DATA SCIENTIST',
-            desc: '"Analyzing transit data to ensure the system recommends the most optimal routes possible."',
-            contact: 'dev4@kmutt.ac.th'
+            role: 'Phurichaya Chaloemsri',
+           
+            contact: 'phurichaya.chal@mail.kmutt.ac.th'
           }
         ]
       },
