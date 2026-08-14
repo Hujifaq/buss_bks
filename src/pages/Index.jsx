@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef, useLayoutEffect } from 'react';
-import { FiMapPin, FiCalendar, FiSearch, FiClock, FiCheckCircle, FiArrowRight } from 'react-icons/fi';
+import { FiMapPin, FiSearch, FiCheckCircle, FiArrowRight } from 'react-icons/fi';
 import { FaExchangeAlt, FaBus } from 'react-icons/fa';
 import { useNavigate } from 'react-router-dom';
 import { supabase } from '../lib/supabaseClient';
@@ -257,7 +257,6 @@ function Index() {
   const { t } = useTranslation();
   const [from, setFrom] = useState('นครราชสีมา');
   const [to, setTo] = useState('');
-  const [time, setTime] = useState('');
   const [locations, setLocations] = useState([]);
   const [activeStep, setActiveStep] = useState(0);
 
@@ -528,19 +527,6 @@ function Index() {
               locations={locations}
               isOrigin={false}
             />
-
-            {/* Time Input */}
-            <div className="w-full lg:w-64 relative group">
-              <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
-                <FiCalendar className="text-gray-400 group-focus-within:text-pink-500 group-focus-within:scale-110 transition-transform" size={20} />
-              </div>
-              <input
-                type="time"
-                value={time}
-                onChange={(e) => setTime(e.target.value)}
-                className="w-full bg-gray-50 border border-gray-200 rounded-lg pl-11 pr-4 py-4 text-gray-800 focus:outline-none focus:bg-white transition-all font-medium text-lg h-full cursor-pointer"
-              />
-            </div>
 
             {/* Find Tickets Button */}
             <div className="w-full lg:w-auto flex items-stretch mt-2 lg:mt-0">
