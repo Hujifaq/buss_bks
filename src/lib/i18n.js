@@ -130,6 +130,11 @@ const resources = {
         vehicleMinibus: 'Minibus (รถสองแถว)',
         vehicleVan: 'Van (รถตู้)',
         vehicleBus: 'Bus (รถทัวร์)',
+        warningEmptyTitle: 'กรุณากรอกข้อมูลค้นหา',
+        warningEmptyMsg: 'โปรดระบุต้นทางหรือปลายทางเพื่อค้นหาเส้นทาง',
+        warningNotFoundTitle: 'ไม่พบเส้นทางในระบบ',
+        warningNotFoundMsg: 'ไม่พบเส้นทางวิ่งของรถโดยสารระหว่างสถานที่ที่ท่านค้นหา',
+        checkOrSelect: 'กรุณาตรวจสอบความถูกต้องของชื่อสถานที่ หรือเลือกเส้นทางจากรายการที่ให้บริการจริง',
       },
 
       // ── Bus Stops ──
@@ -147,6 +152,14 @@ const resources = {
         card: {
           stop: 'จุดจอด:',
           line: 'สาย',
+        },
+        viewDetails: 'ดูรายละเอียด',
+        modal: {
+          time: 'เวลาเดินรถ',
+          fare: 'อัตราค่าโดยสาร',
+          operator: 'ผู้ให้บริการ',
+          stopsVia: 'จุดจอดระหว่างทาง',
+          viewOnMap: 'ดูจำลองเส้นทางบนแผนที่',
         }
       },
 
@@ -327,6 +340,11 @@ const resources = {
         vehicleMinibus: 'Minibus',
         vehicleVan: 'Van',
         vehicleBus: 'Bus',
+        warningEmptyTitle: 'Please enter search criteria',
+        warningEmptyMsg: 'Please specify origin or destination to search for routes',
+        warningNotFoundTitle: 'No Route Found',
+        warningNotFoundMsg: 'No direct bus route was found between the specified locations.',
+        checkOrSelect: 'Please check your spelling or choose from available routes.',
       },
 
       // ── Bus Stops ──
@@ -344,6 +362,14 @@ const resources = {
         card: {
           stop: 'Stop:',
           line: 'Line',
+        },
+        viewDetails: 'View Details',
+        modal: {
+          time: 'Operating Hours',
+          fare: 'Fare',
+          operator: 'Operator',
+          stopsVia: 'Via Stops',
+          viewOnMap: 'View Route Simulation on Map',
         }
       },
 
