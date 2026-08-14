@@ -6,6 +6,8 @@ import { supabase } from '../lib/supabaseClient';
 import gsap from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import Guidebook from '../components/Guidebook';
+import AboutUs from '../components/AboutUs';
+import DevTeam from '../components/DevTeam';
 import { useTranslation } from 'react-i18next';
 
 gsap.registerPlugin(ScrollTrigger);
@@ -455,7 +457,7 @@ function Index() {
   }, []);
 
   return (
-    <div className="min-h-screen bg-gray-50 flex flex-col w-full overflow-x-hidden">
+    <div className="min-h-screen bg-gray-50 flex flex-col w-full">
 
       {/* Hero Section with Background */}
       <div
@@ -544,6 +546,8 @@ function Index() {
       </div>
 
       <Guidebook />
+      <AboutUs />
+      <DevTeam />
       
 
     </div>

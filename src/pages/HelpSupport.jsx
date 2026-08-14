@@ -36,10 +36,7 @@ function HelpSupport() {
                 <h1 className="text-xl sm:text-2xl font-black text-[#241D4F] tracking-tight">
                   {t('help.title')}
                 </h1>
-                <span className="text-xs font-bold text-pink-600 flex items-center gap-1.5 mt-0.5">
-                  <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
-                  {t('help.subtitle')}
-                </span>
+                
               </div>
             </div>
           </div>
