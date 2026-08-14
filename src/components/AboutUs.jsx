@@ -53,7 +53,7 @@ const AboutUs = () => {
 
       {/* ScrollExpand Section for "What is this site?" */}
       <ScrollExpand
-        src="/src/assets/bg_2.jpg"
+        src="https://apywlcxidcnpbqmectgn.supabase.co/storage/v1/object/sign/Public/bg_2.jpg?token=eyJraWQiOiJzdG9yYWdlLXVybC1zaWduaW5nLWtleV81YTVlNjRlNS1mODdhLTRmMjMtODA1OC1mNTNiYWJmYzk5ODciLCJhbGciOiJIUzI1NiJ9.eyJ1cmwiOiJQdWJsaWMvYmdfMi5qcGciLCJzY29wZSI6ImRvd25sb2FkIiwiaWF0IjoxNzg2Njk3MTM1LCJleHAiOjE4MTgyMzMxMzV9.DSTtBG6jEWWcfYIx9rclRI8n-w50Z0-ARCCWt847Xo4"
         alt="Bus journey"
         title={t('about.mission.title')}
         scrollHint="Scroll to expand"
