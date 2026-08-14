@@ -84,27 +84,25 @@ const resources = {
         members: [
           {
             name: 'DEV ONE',
-            role: 'FULL-STACK DEVELOPER',
-            desc: '"รับผิดชอบการออกแบบและพัฒนาทั้งระบบ เพื่อให้ผู้ใช้งานได้รับประสบการณ์ที่ราบรื่นและดีที่สุด"',
-            contact: 'dev1@kmutt.ac.th'
+            role: 'Palise Watanaviso',
+  
+            contact: 'palise.wata@mail.kmutt.ac.th'
           },
           {
             name: 'DEV TWO',
-            role: 'UI/UX DESIGNER',
-            desc: '"ออกแบบส่วนติดต่อผู้ใช้ให้ใช้งานง่าย สวยงาม และตอบโจทย์ผู้ใช้งานทุกกลุ่ม"',
-            contact: 'dev2@kmutt.ac.th'
+            role: 'Nanthanat Charoensuk',
+            
+            contact: 'nanthanat.char@mail.kmutt.ac.th'
           },
           {
             name: 'DEV THREE',
-            role: 'BACKEND ENGINEER',
-            desc: '"ดูแลระบบฐานข้อมูลและ API เพื่อการประมวลผลเส้นทางที่ถูกต้องและรวดเร็ว"',
-            contact: 'dev3@kmutt.ac.th'
+            role: 'Kadsan Supphaakkarhasophon',
+            contact: 'kadsan.sup@mail.kmutt.ac.th'
           },
           {
             name: 'DEV FOUR',
-            role: 'DATA SCIENTIST',
-            desc: '"วิเคราะห์ข้อมูลการเดินรถและเส้นทาง เพื่อให้ระบบสามารถแนะนำเส้นทางที่ดีที่สุดได้"',
-            contact: 'dev4@kmutt.ac.th'
+            role: 'Phurichaya Chaloemsri',
+            contact: 'phurichaya.chal@mail.kmutt.ac.th'
           }
         ]
       },

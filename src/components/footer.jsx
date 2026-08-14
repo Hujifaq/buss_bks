@@ -33,19 +33,7 @@ function Footer() {
     <footer className="w-full bg-[#1a1818] text-white">
       {/* Top Pink Bar */}
       <div className="h-12 bg-gradient-to-r from-[#f65ba1] via-[#ff7ba1] to-[#f65ba1] px-4 md:px-8 flex flex-wrap items-center justify-center md:justify-start gap-3 md:gap-4 text-xs md:text-sm font-semibold tracking-wide shadow-lg">
-        <span className="whitespace-nowrap">ติดต่อ บบส.</span>
-        <span className="hidden sm:inline text-white/40">•</span>
-        <span className="whitespace-nowrap">@BKS99</span>
-        <span className="hidden sm:inline text-white/40">•</span>
-        <span className="flex items-center gap-1 whitespace-nowrap">
-          <FaFacebookF className="text-xs" />
-          บขส.
-        </span>
-        <span className="hidden sm:inline text-white/40">•</span>
-        <span className="flex items-center gap-1 whitespace-nowrap">
-          <FaFacebookF className="text-xs" />
-          สถานีขนส่งผู้โดยสารจังหวัดนครราชสีมา แห่งที่ 2
-        </span>
+        
       </div>
 
       {/* Main Content */}
