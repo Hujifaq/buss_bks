@@ -13,6 +13,7 @@ import { useTranslation } from 'react-i18next';
 gsap.registerPlugin(ScrollTrigger);
 
 const AutocompleteInput = ({ value, onChange, placeholder, icon: Icon, locations, isOrigin }) => {
+  const { i18n } = useTranslation();
   const [isOpen, setIsOpen] = useState(false);
   const wrapperRef = useRef(null);
 
@@ -26,7 +27,11 @@ const AutocompleteInput = ({ value, onChange, placeholder, icon: Icon, locations
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
 
-  const filtered = locations.filter(loc => loc.searchString.includes(value.toLowerCase()));
+  const filtered = (locations || []).filter(loc => {
+    if (!loc) return false;
+    const str = loc.searchString || (loc.value ? String(loc.value).toLowerCase() : '');
+    return str.includes((value || '').toLowerCase());
+  });
 
   return (
     <div className="w-full lg:flex-1 relative group" ref={wrapperRef}>
@@ -48,19 +53,24 @@ const AutocompleteInput = ({ value, onChange, placeholder, icon: Icon, locations
       {/* Dropdown Menu */}
       {isOpen && filtered.length > 0 && (
         <div className="absolute top-full left-0 z-50 w-full mt-2 bg-white border border-gray-100 rounded-xl shadow-[0_10px_25px_rgba(0,0,0,0.1)] max-h-60 overflow-y-auto">
-          {filtered.map((loc, idx) => (
-            <div
-              key={idx}
-              className="px-5 py-3 hover:bg-[#fff0f5] cursor-pointer text-gray-700 transition-colors border-b border-gray-50 last:border-0"
-              onClick={() => {
-                onChange(loc.value);
-                setIsOpen(false);
-              }}
-            >
-              <div className="font-bold text-[#241D4F]">{loc.value}</div>
-              {loc.enValue && <div className="text-xs text-gray-400">{loc.enValue}</div>}
-            </div>
-          ))}
+          {filtered.map((loc, idx) => {
+            const isEn = i18n.language === 'en';
+            const displayName = (isEn && loc.enValue) ? loc.enValue : loc.value;
+            return (
+              <div
+                key={idx}
+                className="px-5 py-3 hover:bg-[#fff0f5] cursor-pointer text-gray-700 transition-colors border-b border-gray-50 last:border-0"
+                onClick={() => {
+                  const isEn = i18n.language === 'en';
+                  const valToSet = (isEn && loc.enValue) ? loc.enValue : loc.value;
+                  onChange(valToSet);
+                  setIsOpen(false);
+                }}
+              >
+                <div className="font-bold text-[#241D4F]">{displayName}</div>
+              </div>
+            );
+          })}
         </div>
       )}
     </div>
