@@ -12,7 +12,7 @@ const DevTeam = () => {
   const safeMembers = Array.isArray(members) ? members : [
     { role: 'ENGINEER', desc: '...', contact: '@kmutt' },
     { role: 'ENGINEER', desc: '...', contact: '@kmutt' },
-    { role: 'ENGINEER', desc: '...', contact: '@kmutt' },
+    { role: 'ENGINEER', desc: 'kadsan.supp@kmutt.ac.th', contact: '@kmutt' },
     { role: 'ENGINEER', desc: '...', contact: '@kmutt' },
   ];
 
