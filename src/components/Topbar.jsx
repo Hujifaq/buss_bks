@@ -1,18 +1,17 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { FiSearch, FiChevronDown, FiMapPin, FiClock } from 'react-icons/fi';
+import { FiSearch, FiMapPin, FiClock } from 'react-icons/fi';
 import { IoMdClose } from 'react-icons/io';
-import { FaBus } from 'react-icons/fa';
 import gsap from 'gsap';
 import HamburgerMenu from './HamburgerMenu';
 import { useTranslation } from 'react-i18next';
+import logoBks from '../assets/logo_bks2.png';
 
 function Topbar() {
   const { t, i18n } = useTranslation();
   const navigate = useNavigate();
   const [isSearchModalOpen, setIsSearchModalOpen] = useState(false);
   const [modalSearchQuery, setModalSearchQuery] = useState('');
-  const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const [isLangDropdownOpen, setIsLangDropdownOpen] = useState(false);
   const [isDesktopMenuOpen, setIsDesktopMenuOpen] = useState(false);
   const [selectedLang, setSelectedLang] = useState('TH');
@@ -23,7 +22,6 @@ function Topbar() {
     setIsLangDropdownOpen(false);
   };
 
-  const chevronRef = useRef(null);
   const searchModalBgRef = useRef(null);
   const searchModalContentRef = useRef(null);
   const langIconRef = useRef(null);
@@ -37,17 +35,6 @@ function Topbar() {
       );
     }
   }, [selectedLang]);
-
-  // Dropdown chevron animation
-  useEffect(() => {
-    if (chevronRef.current) {
-      gsap.to(chevronRef.current, {
-        rotation: isDropdownOpen ? 180 : 0,
-        duration: 0.3,
-        ease: "power2.out"
-      });
-    }
-  }, [isDropdownOpen]);
 
   // Search Modal Entry Animation
   useEffect(() => {
@@ -94,9 +81,9 @@ function Topbar() {
 
   return (
     <>
-      <div className="flex flex-col w-full sticky top-0 z-40">
+      <div className="flex flex-col w-full sticky top-0 z-[1000]">
 
-        <div className={`flex items-center justify-between px-4 md:px-24 py-2 w-full relative z-50 transition-colors duration-300 ${isDropdownOpen ? 'bg-[#ffe4eb]' : 'bg-white'}`}>
+        <div className="flex items-center justify-between px-4 md:px-24 py-2 w-full relative z-50 transition-colors duration-300 bg-white">
 
           {/* Left: Language Selection */}
           <div className="relative">
@@ -105,7 +92,6 @@ function Topbar() {
               className="w-8 h-8 rounded-full flex-shrink-0 cursor-pointer shadow-sm border border-gray-100 flex items-center justify-center transition-transform hover:scale-105"
               onClick={() => {
                 setIsLangDropdownOpen(!isLangDropdownOpen);
-                if (isDropdownOpen) setIsDropdownOpen(false);
               }}
               style={selectedLang === 'TH'
                 ? { background: 'linear-gradient(to bottom, #ED1C24 16.6%, #ffffff 16.6%, #ffffff 33.3%, #241D4F 33.3%, #241D4F 66.6%, #ffffff 66.6%, #ffffff 83.3%, #ED1C24 83.3%)' }
@@ -146,30 +132,20 @@ function Topbar() {
           </div>
 
           <div
-            className="flex items-center justify-center gap-1 cursor-pointer"
-            onClick={() => {
-              setIsDropdownOpen(!isDropdownOpen);
-              if (isLangDropdownOpen) setIsLangDropdownOpen(false);
-            }}
+            className="flex items-center justify-center cursor-pointer"
+            onClick={() => navigate('/')}
           >
-            <img src="/src/assets/logo_bks.png" alt="BKS Logo" className="h-20 w-auto object-contain" />
-            <div className="w-4 h-4 mt-3 rounded-full bg-gray-200 flex items-center justify-center text-gray-600">
-              <div ref={chevronRef} className="flex items-center justify-center">
-                <FiChevronDown size={14} />
-              </div>
-            </div>
+            <img src={logoBks} alt="BKS Logo" className="h-20 w-auto object-contain" />
           </div>
 
           <div className="flex items-center gap-3 text-black">
 
-            
             {/* Enhanced Hamburger Menu Component */}
             <HamburgerMenu
               isOpen={isDesktopMenuOpen}
               setIsOpen={(val) => {
                 setIsDesktopMenuOpen(val);
                 if (val) {
-                  if (isDropdownOpen) setIsDropdownOpen(false);
                   if (isLangDropdownOpen) setIsLangDropdownOpen(false);
                 }
               }}
@@ -177,38 +153,6 @@ function Topbar() {
                 setIsSearchModalOpen(true);
               }}
             />
-          </div>
-        </div>
-
-        {/* Dropdown Menu */}
-        <div
-          className={`bg-[#ffe4eb] w-full overflow-hidden transition-all duration-300 ease-in-out ${isDropdownOpen ? 'max-h-40 opacity-100 pb-6' : 'max-h-0 opacity-0'
-            }`}
-        >
-          <div className="flex items-start justify-center gap-4 px-4 pt-2">
-            <div className="flex flex-col items-center gap-2">
-              <div className="w-12 h-12 bg-white rounded-full flex items-center justify-center shadow-sm">
-                <FaBus size={20} className="text-[#ff7a00]" />
-              </div>
-              <span className="text-xs font-bold text-black">{t('topbar.vehicleTypes.tour')}</span>
-            </div>
-
-            <div className="flex flex-col items-center gap-2">
-              <div className="w-12 h-12 bg-white rounded-full flex items-center justify-center shadow-sm">
-              </div>
-              <span className="text-xs font-bold text-black">{t('topbar.vehicleTypes.van')}</span>
-            </div>
-
-            <div className="flex flex-col items-center gap-2">
-              <div className="w-12 h-12 bg-white rounded-full flex items-center justify-center shadow-sm">
-              </div>
-              <span className="text-xs font-bold text-black">{t('topbar.vehicleTypes.songtaew')}</span>
-            </div>
-
-            <div className="flex flex-col items-center gap-2">
-              <div className="w-12 h-12 bg-white rounded-full flex items-center justify-center shadow-sm">
-              </div>
-            </div>
           </div>
         </div>
       </div>

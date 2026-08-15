@@ -5,6 +5,7 @@ import { useNavigate, useLocation } from 'react-router-dom';
 import { FiHome, FiMap, FiSearch, FiHelpCircle, FiChevronRight, FiX } from 'react-icons/fi';
 import { FaBus } from 'react-icons/fa';
 import { RxHamburgerMenu } from 'react-icons/rx';
+import logoBks from '../assets/logo_bks2.png';
 
 function HamburgerMenu({ isOpen, setIsOpen }) {
   const navigate = useNavigate();
@@ -52,7 +53,7 @@ function HamburgerMenu({ isOpen, setIsOpen }) {
       {/* Clean & Minimalist Hamburger Trigger Button */}
       <button
         onClick={() => setIsOpen(!isOpen)}
-        className="relative z-50 w-9 h-9 rounded-xl bg-white hover:bg-gray-100 border border-gray-200 text-gray-800 flex items-center justify-center cursor-pointer focus:outline-none transition-colors duration-150 shadow-sm"
+        className="relative z-[10000] w-9 h-9 rounded-xl bg-white hover:bg-gray-100 border border-gray-200 text-gray-800 flex items-center justify-center cursor-pointer focus:outline-none transition-colors duration-150 shadow-sm"
         aria-label={isOpen ? "Close Menu" : "Open Menu"}
         title={isOpen ? "Close Menu" : "Open Menu"}
       >
@@ -70,7 +71,7 @@ function HamburgerMenu({ isOpen, setIsOpen }) {
               exit={{ opacity: 0 }}
               transition={{ duration: 0.2 }}
               onClick={() => setIsOpen(false)}
-              className="fixed inset-0 bg-black/20 z-40"
+              className="fixed inset-0 bg-black/40 z-[9998]"
             />
 
             {/* Clean Minimalist Slide Drawer */}
@@ -79,7 +80,7 @@ function HamburgerMenu({ isOpen, setIsOpen }) {
               animate={{ x: 0 }}
               exit={{ x: '100%' }}
               transition={{ type: 'tween', duration: 0.22, ease: 'easeOut' }}
-              className="fixed top-0 right-0 h-full w-[85vw] max-w-sm sm:w-80 bg-white shadow-[-10px_0_30px_rgba(0,0,0,0.06)] z-40 flex flex-col justify-between py-8 px-6 border-l border-gray-100 overflow-y-auto"
+              className="fixed top-0 right-0 h-full w-[85vw] max-w-sm sm:w-80 bg-white shadow-[-10px_0_30px_rgba(0,0,0,0.12)] z-[9999] flex flex-col justify-between py-8 px-6 border-l border-gray-100 overflow-y-auto"
             >
               {/* Drawer Content */}
               <div className="flex flex-col gap-6 pt-2">
@@ -87,7 +88,7 @@ function HamburgerMenu({ isOpen, setIsOpen }) {
                 <div className="flex items-center justify-between pb-4 border-b border-gray-100">
                   <div className="flex items-center gap-3">
                     <img
-                      src="/src/assets/logo_bks.png"
+                      src={logoBks}
                       alt="BKS Logo"
                       className="h-8 w-auto object-contain"
                     />

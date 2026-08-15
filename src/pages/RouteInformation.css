@@ -123,29 +123,40 @@
   transform: translate(-50%, 50%);
 }
 
-/* Info Card */
+/* Info Card (Pinned at bottom-right of map) */
 .ri-info-card {
   position: absolute;
-  bottom: 120px;
-  left:70%;
-  transform: translateX(-50%);
-  width: calc(100% - 48px);
-  max-width: 600px;
-  background-color: #000000;
-  border-radius: 20px;
+  bottom: 24px;
+  right: 24px;
+  left: auto;
+  transform: none;
+  width: auto;
+  max-width: 460px;
+  background-color: rgba(0, 0, 0, 0.92);
+  backdrop-filter: blur(8px);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  border-radius: 18px;
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 24px 32px;
-  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2);
-  z-index: 10;
+  padding: 16px 20px;
+  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.35);
+  z-index: 40;
+}
+
+.ri-card-body {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
 }
 
 .ri-card-content {
   display: flex;
   flex-direction: column;
-  gap: 12px;
+  gap: 10px;
   flex: 1;
+  min-width: 0;
 }
 
 .ri-badge {
@@ -161,33 +172,36 @@
 
 .ri-card-title {
   color: white;
-  font-size: 20px;
+  font-size: 18px;
   font-weight: 700;
   margin: 0;
+  line-height: 1.3;
 }
 
 .ri-card-divider {
   height: 1px;
-  background-color: rgba(255, 255, 255, 0.2);
+  background-color: rgba(255, 255, 255, 0.15);
   width: 100%;
-  margin: 8px 0;
+  margin: 4px 0;
 }
 
 .ri-card-time {
   color: #a0a0a0;
-  font-size: 14px;
+  font-size: 13px;
   display: flex;
   align-items: center;
   gap: 8px;
 }
 
 .ri-card-bus {
-  width: 150px;
-  height: 80px;
+  width: 120px;
+  height: 75px;
   background-color: #ffffff;
-  border-radius: 8px;
-  margin-left: 24px;
+  border-radius: 10px;
+  margin-left: 18px;
   overflow: hidden;
+  flex-shrink: 0;
+  border: 1px solid rgba(255, 255, 255, 0.2);
 }
 
 .ri-card-bus img {
@@ -356,12 +370,22 @@
 .ri-bottom-banner {
   margin-top: 24px;
   background-color: #dcf3ff;
-  color: #000000;
-  padding: 16px;
-  border-radius: 8px;
-  font-size: 10px;
-  text-align: center;
-  font-weight: 500;
+  color: #0369a1;
+  padding: 12px 16px;
+  border-radius: 10px;
+  font-size: 11px;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  line-height: 1.4;
+  border: 1px solid #bae6fd;
+}
+
+.ri-banner-icon {
+  color: #0284c7;
+  flex-shrink: 0;
 }
 
 /* Utility Classes for Responsive Display */
@@ -377,6 +401,127 @@
 @media (max-width: 768px) {
   .ri-layout {
     flex-direction: column;
+    padding-top: 0;
+  }
+  
+  .ri-main {
+    position: relative;
+    width: 100%;
+  }
+
+  .ri-map-area {
+    min-height: 65vh;
+    height: 65vh;
+    position: relative;
+    width: 100%;
+    margin-top: 0;
+  }
+
+  .ri-mobile-search-banner {
+    position: absolute;
+    top: 8px;
+    left: 10px;
+    right: 10px;
+    z-index: 50;
+    margin: 0;
+    padding: 0;
+    background: transparent !important;
+    border: none !important;
+    box-shadow: none !important;
+    pointer-events: auto;
+  }
+
+  .ri-mobile-search-banner .ri-search-container {
+    margin-bottom: 0;
+    background: rgba(255, 255, 255, 0.96);
+    backdrop-filter: blur(12px);
+    border: 1px solid rgba(226, 232, 240, 0.9);
+    border-radius: 14px;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.16);
+    padding: 10px 12px;
+  }
+
+  /* Compact Floating Bar on Mobile */
+  .ri-compact-search-bar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    width: 100%;
+    padding: 8px 14px;
+    background: rgba(255, 255, 255, 0.96);
+    backdrop-filter: blur(12px);
+    border: 1px solid rgba(226, 232, 240, 0.9);
+    border-radius: 9999px;
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.12);
+    cursor: pointer;
+    transition: all 0.2s ease;
+  }
+
+  .ri-compact-search-bar:active {
+    transform: scale(0.98);
+  }
+
+  .ri-compact-search-info {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 13px;
+    font-weight: 600;
+    color: #1e293b;
+    overflow: hidden;
+  }
+
+  .ri-compact-from, .ri-compact-to {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 100px;
+  }
+
+  .ri-compact-expand-btn {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    background: #fff0f5;
+    color: #ff4d85;
+    padding: 4px 10px;
+    border-radius: 14px;
+    font-size: 12px;
+    font-weight: 700;
+    flex-shrink: 0;
+  }
+
+  /* Expanded Floating Search Box Header */
+  .ri-expanded-header-bar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 6px;
+    padding: 0 4px;
+  }
+
+  .ri-expanded-title {
+    font-size: 12px;
+    font-weight: 700;
+    color: #ffffff;
+    text-shadow: 0 1px 3px rgba(0,0,0,0.6);
+    letter-spacing: 0.02em;
+  }
+
+  .ri-collapse-btn {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    background: rgba(255, 255, 255, 0.92);
+    backdrop-filter: blur(8px);
+    border: 1px solid rgba(226, 232, 240, 0.8);
+    color: #475569;
+    padding: 3px 10px;
+    border-radius: 14px;
+    font-size: 12px;
+    font-weight: 600;
+    cursor: pointer;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
   }
   
   .desktop-only {
@@ -396,13 +541,95 @@
   }
 
   .ri-info-card {
-    width: calc(100% - 32px);
-    bottom: -60px;
-    left: 50%;
-    transform: translateX(-50%);
-    padding: 16px 20px;
-    border-radius: 16px;
-    z-index: 20;
+    position: absolute;
+    bottom: 16px;
+    right: 16px;
+    left: 16px;
+    transform: none;
+    width: auto;
+    max-width: none;
+    padding: 10px 16px 14px 16px;
+    border-radius: 18px;
+    z-index: 40;
+    flex-direction: column;
+    align-items: stretch;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    touch-action: pan-y;
+  }
+
+  .ri-info-card.collapsed {
+    padding: 8px 14px 10px 14px;
+    bottom: 12px;
+    background-color: rgba(0, 0, 0, 0.88);
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.4);
+    border-color: rgba(255, 255, 255, 0.2);
+  }
+
+  .ri-card-handle-bar {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding-bottom: 6px;
+    cursor: pointer;
+    width: 100%;
+    user-select: none;
+  }
+
+  .ri-drag-pill {
+    width: 36px;
+    height: 4px;
+    background-color: rgba(255, 255, 255, 0.35);
+    border-radius: 999px;
+    margin-bottom: 4px;
+    transition: background-color 0.2s ease;
+  }
+
+  .ri-info-card:hover .ri-drag-pill,
+  .ri-card-handle-bar:hover .ri-drag-pill {
+    background-color: rgba(255, 255, 255, 0.6);
+  }
+
+  .ri-card-toggle-btn {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    background: rgba(255, 255, 255, 0.12);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    color: #ffffff;
+    padding: 2px 10px;
+    border-radius: 12px;
+    font-size: 11px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background-color 0.15s ease;
+  }
+
+  .ri-card-toggle-btn:hover {
+    background: rgba(255, 255, 255, 0.22);
+  }
+
+  .ri-card-collapsed-content {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    width: 100%;
+    padding-top: 2px;
+    cursor: pointer;
+  }
+
+  .ri-collapsed-title {
+    color: #ffffff;
+    font-size: 13px;
+    font-weight: 600;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    flex: 1;
+  }
+
+  .ri-card-body.hidden-on-mobile {
+    display: none !important;
   }
 
   .ri-card-content {
@@ -412,17 +639,21 @@
   }
 
   .ri-card-title {
-    font-size: 16px;
-    line-height: 1.4;
+    font-size: 15px;
+    line-height: 1.3;
     word-break: break-word;
+  }
+
+  .ri-card-bus {
+    width: 80px;
+    height: 56px;
+    margin-left: 10px;
+    border-radius: 8px;
+    flex-shrink: 0;
   }
 
   .ri-card-time {
     font-size: 13px;
-  }
-  
-  .ri-map-area {
-    min-height: 55vh;
   }
 }
 
@@ -605,5 +836,122 @@
   z-index: 30;
   justify-content: center;
   align-items: center;
+}
+
+/* Search Warning Box */
+.ri-warning-box {
+  background-color: #fffbe6;
+  border: 1px solid #ffe58f;
+  border-radius: 10px;
+  padding: 10px 12px;
+  margin-top: 6px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  animation: fadeIn 0.2s ease-in-out;
+}
+
+.ri-warning-header {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.ri-warning-icon {
+  color: #d48806;
+  flex-shrink: 0;
+}
+
+.ri-warning-title {
+  font-size: 12px;
+  font-weight: 700;
+  color: #873800;
+  flex: 1;
+}
+
+.ri-warning-close {
+  background: transparent;
+  border: none;
+  color: #873800;
+  cursor: pointer;
+  padding: 2px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 4px;
+  line-height: 1;
+}
+
+.ri-warning-close:hover {
+  background-color: rgba(0, 0, 0, 0.06);
+}
+
+.ri-warning-msg {
+  font-size: 11.5px;
+  color: #612500;
+  line-height: 1.4;
+  margin: 0;
+}
+
+/* Compact Vertical Scrollable Company List inside Floating Info Card */
+.ri-company-list {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  max-height: 75px;
+  overflow-y: auto;
+  margin-top: 4px;
+  margin-bottom: 6px;
+  padding-right: 2px;
+}
+
+.ri-company-list::-webkit-scrollbar {
+  width: 3px;
+}
+.ri-company-list::-webkit-scrollbar-track {
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 3px;
+}
+.ri-company-list::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.25);
+  border-radius: 3px;
+}
+.ri-company-list::-webkit-scrollbar-thumb:hover {
+  background: #ff4d85;
+}
+
+.ri-company-btn {
+  display: flex;
+  align-items: center;
+  width: 100%;
+  padding: 4px 10px;
+  border-radius: 6px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  background: rgba(255, 255, 255, 0.04);
+  color: #d4d4d8;
+  font-size: 12px;
+  font-weight: 500;
+  cursor: pointer;
+  text-align: left;
+  transition: all 0.15s ease;
+}
+
+.ri-company-btn:hover {
+  background: rgba(255, 255, 255, 0.1);
+  color: #ffffff;
+  border-color: rgba(255, 255, 255, 0.25);
+}
+
+.ri-company-btn.active {
+  background: rgba(255, 77, 133, 0.2);
+  border-color: #ff4d85;
+  color: #ffffff;
+  font-weight: 600;
+}
+
+.ri-company-name {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 

@@ -69,7 +69,7 @@ const resources = {
         subtitle: 'เรามุ่งมั่นที่จะทำให้การเดินทางด้วยรถโดยสารสาธารณะในจังหวัดนครราชสีมาเป็นเรื่องง่าย สะดวก และเข้าถึงได้สำหรับทุกคน',
         mission: {
           title: 'เว็บไซต์นี้คืออะไร?',
-          desc: 'แพลตฟอร์มนี้คือผู้ช่วยค้นหาเส้นทางรถโดยสารที่ครอบคลุมที่สุดในนครราชสีมา เราได้รวบรวมตารางเวลา เส้นทาง และประเภทรถ เพื่อช่วยให้ทั้งคนในพื้นที่และนักท่องเที่ยวสามารถวางแผนการเดินทางได้อย่างราบรื่นและไร้รอยต่อ',
+          desc: 'แพลตฟอร์มนี้คือผู้ช่วยค้นหาเส้นทางรถโดยสารที่เป็นข้อมูลเดินรถของ ขนส่งนครราชสีมาแห่งที่ 1 เราได้รวบรวมตารางเวลา เส้นทาง และประเภทรถ เพื่อช่วยให้ทั้งคนในพื้นที่และนักท่องเที่ยวสามารถวางแผนการเดินทาง',
         },
         team: {
           title: 'ผู้พัฒนา',
@@ -84,27 +84,25 @@ const resources = {
         members: [
           {
             name: 'DEV ONE',
-            role: 'FULL-STACK DEVELOPER',
-            desc: '"รับผิดชอบการออกแบบและพัฒนาทั้งระบบ เพื่อให้ผู้ใช้งานได้รับประสบการณ์ที่ราบรื่นและดีที่สุด"',
-            contact: 'dev1@kmutt.ac.th'
+            role: 'Palise Watanaviso',
+  
+            contact: 'palise.wata@mail.kmutt.ac.th'
           },
           {
             name: 'DEV TWO',
-            role: 'UI/UX DESIGNER',
-            desc: '"ออกแบบส่วนติดต่อผู้ใช้ให้ใช้งานง่าย สวยงาม และตอบโจทย์ผู้ใช้งานทุกกลุ่ม"',
-            contact: 'dev2@kmutt.ac.th'
+            role: 'Nanthanat Charoensuk',
+            
+            contact: 'nanthanat.char@mail.kmutt.ac.th'
           },
           {
             name: 'DEV THREE',
-            role: 'BACKEND ENGINEER',
-            desc: '"ดูแลระบบฐานข้อมูลและ API เพื่อการประมวลผลเส้นทางที่ถูกต้องและรวดเร็ว"',
-            contact: 'dev3@kmutt.ac.th'
+            role: 'Kadsan Supphaakkarhasophon',
+            contact: 'kadsan.supp@mail.kmutt.ac.th'
           },
           {
             name: 'DEV FOUR',
-            role: 'DATA SCIENTIST',
-            desc: '"วิเคราะห์ข้อมูลการเดินรถและเส้นทาง เพื่อให้ระบบสามารถแนะนำเส้นทางที่ดีที่สุดได้"',
-            contact: 'dev4@kmutt.ac.th'
+            role: 'Phurichaya Chaloemsri',
+            contact: 'phurichaya.chal@mail.kmutt.ac.th'
           }
         ]
       },
@@ -130,6 +128,11 @@ const resources = {
         vehicleMinibus: 'Minibus (รถสองแถว)',
         vehicleVan: 'Van (รถตู้)',
         vehicleBus: 'Bus (รถทัวร์)',
+        warningEmptyTitle: 'กรุณากรอกข้อมูลค้นหา',
+        warningEmptyMsg: 'โปรดระบุต้นทางหรือปลายทางเพื่อค้นหาเส้นทาง',
+        warningNotFoundTitle: 'ไม่พบเส้นทางในระบบ',
+        warningNotFoundMsg: 'ไม่พบเส้นทางวิ่งของรถโดยสารระหว่างสถานที่ที่ท่านค้นหา',
+        checkOrSelect: 'กรุณาตรวจสอบความถูกต้องของชื่อสถานที่ หรือเลือกเส้นทางจากรายการที่ให้บริการจริง',
       },
 
       // ── Bus Stops ──
@@ -147,6 +150,14 @@ const resources = {
         card: {
           stop: 'จุดจอด:',
           line: 'สาย',
+        },
+        viewDetails: 'ดูรายละเอียด',
+        modal: {
+          time: 'เวลาเดินรถ',
+          fare: 'อัตราค่าโดยสาร',
+          operator: 'ผู้ให้บริการ',
+          stopsVia: 'จุดจอดระหว่างทาง',
+          viewOnMap: 'ดูจำลองเส้นทางบนแผนที่',
         }
       },
 
@@ -281,27 +292,27 @@ const resources = {
         members: [
           {
             name: 'DEV ONE',
-            role: 'FULL-STACK DEVELOPER',
-            desc: '"Responsible for end-to-end development, ensuring the best and smoothest user experience."',
-            contact: 'dev1@kmutt.ac.th'
+            role: 'Palise Watanaviso',
+           
+            contact: 'palise.wata@mail.kmutt.ac.th'
           },
           {
             name: 'DEV TWO',
-            role: 'UI/UX DESIGNER',
-            desc: '"Designing intuitive, beautiful interfaces that meet the needs of all user groups."',
-            contact: 'dev2@kmutt.ac.th'
+            role: 'Nanthanat Charoensuk',
+           
+            contact: 'nanthanat.char@mail.kmutt.ac.th'
           },
           {
             name: 'DEV THREE',
-            role: 'BACKEND ENGINEER',
-            desc: '"Maintaining databases and APIs for accurate and lightning-fast route processing."',
-            contact: 'dev3@kmutt.ac.th'
+            role: 'Kadsan Supphaakkarhasophon',
+          
+            contact: 'kadsan.supp@mail.kmutt.ac.th'
           },
           {
             name: 'DEV FOUR',
-            role: 'DATA SCIENTIST',
-            desc: '"Analyzing transit data to ensure the system recommends the most optimal routes possible."',
-            contact: 'dev4@kmutt.ac.th'
+            role: 'Phurichaya Chaloemsri',
+           
+            contact: 'phurichaya.chal@mail.kmutt.ac.th'
           }
         ]
       },
@@ -327,6 +338,11 @@ const resources = {
         vehicleMinibus: 'Minibus',
         vehicleVan: 'Van',
         vehicleBus: 'Bus',
+        warningEmptyTitle: 'Please enter search criteria',
+        warningEmptyMsg: 'Please specify origin or destination to search for routes',
+        warningNotFoundTitle: 'No Route Found',
+        warningNotFoundMsg: 'No direct bus route was found between the specified locations.',
+        checkOrSelect: 'Please check your spelling or choose from available routes.',
       },
 
       // ── Bus Stops ──
@@ -344,6 +360,14 @@ const resources = {
         card: {
           stop: 'Stop:',
           line: 'Line',
+        },
+        viewDetails: 'View Details',
+        modal: {
+          time: 'Operating Hours',
+          fare: 'Fare',
+          operator: 'Operator',
+          stopsVia: 'Via Stops',
+          viewOnMap: 'View Route Simulation on Map',
         }
       },
 
