@@ -1,10 +1,11 @@
-import React, { useState, useEffect, useMemo, useRef } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { supabase } from '../lib/supabaseClient';
-import { FiSearch, FiX, FiChevronDown, FiMapPin, FiClock, FiNavigation, FiArrowRight, FiCheck } from 'react-icons/fi';
-import { FaBus } from 'react-icons/fa';
+import { FiSearch, FiX, FiChevronDown, FiMapPin, FiClock, FiNavigation, FiArrowRight, FiCheck, FiDollarSign } from 'react-icons/fi';
+import { FaBus, FaBuilding } from 'react-icons/fa';
 import { MoonLoader } from 'react-spinners';
+import { motion, AnimatePresence } from 'framer-motion';
 
 // High-quality realistic transport vehicle fallback photos
 const fallbackPhotos = [
@@ -26,9 +27,8 @@ function BusStops() {
   const [loading, setLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState(initialQuery);
   const [selectedVehicleFilter, setSelectedVehicleFilter] = useState('all');
-  const [selectedOrigin, setSelectedOrigin] = useState('');
-  const [isDropdownOpen, setIsDropdownOpen] = useState(false);
-  const dropdownRef = useRef(null);
+  const [selectedTimeFilter, setSelectedTimeFilter] = useState('');
+  const [modalRoute, setModalRoute] = useState(null);
 
   // Sync URL search param changes with local state
   useEffect(() => {
@@ -45,17 +45,6 @@ function BusStops() {
       setSearchParams({});
     }
   };
-
-  // Close origin dropdown when clicking outside
-  useEffect(() => {
-    const handleClickOutside = (event) => {
-      if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
-        setIsDropdownOpen(false);
-      }
-    };
-    document.addEventListener('mousedown', handleClickOutside);
-    return () => document.removeEventListener('mousedown', handleClickOutside);
-  }, []);
 
   // Fetch Supabase route data
   useEffect(() => {
@@ -77,30 +66,25 @@ function BusStops() {
     fetchBusRoutes();
   }, []);
 
-  // Extract distinct origin stop options for dropdown
-  const originOptions = useMemo(() => {
-    const origins = new Set();
-    origins.add('All Origins');
-
-    routesData.forEach((r) => {
-      if (r.route_name_th) {
-        const parts = r.route_name_th.split(/\s*[-–—_:|]\s*/).map((s) => s.trim()).filter(Boolean);
-        if (parts.length > 0) origins.add(parts[0]);
-      }
-    });
-
-    return Array.from(origins);
-  }, [routesData]);
-
   // Format and process routes into card view objects
   const processedRoutes = useMemo(() => {
     return routesData.map((route, index) => {
       const thName = route.route_name_th || '';
       const enName = route.route_name_en || '';
-      const parts = thName.split(/\s*[-–—_:|]\s*/).map((s) => s.trim()).filter(Boolean);
-      
-      const originName = parts[0] || 'นครราชสีมา';
-      const destName = parts[parts.length - 1] || enName || 'ปลายทาง';
+
+      const thParts = thName.split(/\s*[-–—_:|]\s*/).map((s) => s.trim()).filter(Boolean);
+      const enParts = enName.split(/\s*[-–—_:|]\s*/).map((s) => s.trim()).filter(Boolean);
+
+      const isEn = i18n.language === 'en';
+
+      const originTh = thParts[0] || 'นครราชสีมา';
+      const destTh = thParts[thParts.length - 1] || 'ปลายทาง';
+
+      const originEn = enParts[0] || originTh;
+      const destEn = enParts[enParts.length - 1] || destTh;
+
+      const originName = isEn ? originEn : originTh;
+      const destName = isEn ? destEn : destTh;
 
       // Photo selection (valid supabase photo URL or realistic fallback)
       let photoUrl = route.photo;
@@ -136,9 +120,11 @@ function BusStops() {
         ...route,
         id: route.route_id || index,
         routeCode: route.route_code || `${index + 1}`,
-        title: (i18n.language === 'en' && enName) ? enName : thName || enName || `${t('busStops.card.line')} ${route.route_code || ''}`,
+        title: (isEn && enName) ? enName : thName || enName || `${t('busStops.card.line')} ${route.route_code || ''}`,
         origin: originName,
         destination: destName,
+        originTh,
+        destTh,
         stopName: `${t('busStops.card.stop')} ${originName}`,
         vehicleTypeBadge: vehicleBadge,
         vType,
@@ -155,17 +141,45 @@ function BusStops() {
   const filteredRoutes = useMemo(() => {
     let result = processedRoutes;
 
-    // Filter by Origin Dropdown
-    if (selectedOrigin && selectedOrigin !== 'All Origins') {
-      result = result.filter((item) => item.origin.toLowerCase().includes(selectedOrigin.toLowerCase()));
-    }
-
     // Filter by Vehicle Type Pill
     if (selectedVehicleFilter !== 'all') {
       result = result.filter((item) => {
+        if (selectedVehicleFilter === 'ac') {
+          return (
+            item.vType === 'ac' ||
+            item.vehicleTypeBadge?.toLowerCase().includes('ac') ||
+            item.vehicleTypeBadge?.includes('แอร์') ||
+            item.fare_aircon_min_baht ||
+            item.fare_aircon_max_baht
+          );
+        }
         if (selectedVehicleFilter === 'van') return item.vType === 'van';
         if (selectedVehicleFilter === 'minibus') return item.vType === 'minibus';
         if (selectedVehicleFilter === 'bus') return item.vType === 'bus' || item.vType === 'express' || (!item.vType);
+        return true;
+      });
+    }
+
+    // Filter by Selected Operating Time Shift (Morning / Afternoon / Evening)
+    if (selectedTimeFilter && selectedTimeFilter !== 'all') {
+      result = result.filter((item) => {
+        if (!item.timeRange) return true;
+        const match = item.timeRange.match(/(\d{1,2})[.:](\d{2})\s*[-–—]\s*(\d{1,2})[.:](\d{2})/);
+        if (!match) return true;
+
+        const startMins = parseInt(match[1], 10) * 60 + parseInt(match[2], 10);
+        const endMins = parseInt(match[3], 10) * 60 + parseInt(match[4], 10);
+
+        if (selectedTimeFilter === 'morning') {
+          // Morning 05:00 - 12:00 (300 to 720 mins)
+          return startMins <= 720 && endMins >= 300;
+        } else if (selectedTimeFilter === 'afternoon') {
+          // Afternoon 12:00 - 17:00 (720 to 1020 mins)
+          return startMins <= 1020 && endMins >= 720;
+        } else if (selectedTimeFilter === 'evening') {
+          // Evening 17:00+ (>= 1020 mins)
+          return endMins >= 1020;
+        }
         return true;
       });
     }
@@ -186,16 +200,12 @@ function BusStops() {
     }
 
     return result;
-  }, [processedRoutes, selectedOrigin, selectedVehicleFilter, searchQuery]);
-
-  const handleSelectRoute = (route) => {
-    navigate(`/route-information?origin=${encodeURIComponent(route.origin)}&destination=${encodeURIComponent(route.destination)}`);
-  };
+  }, [processedRoutes, selectedVehicleFilter, selectedTimeFilter, searchQuery]);
 
   const handleResetFilters = () => {
     handleSearchChange('');
-    setSelectedOrigin('');
     setSelectedVehicleFilter('all');
+    setSelectedTimeFilter('all');
   };
 
   if (loading) {
@@ -213,72 +223,56 @@ function BusStops() {
 
         {/* Global Prominent Search & Control Header */}
         <div className="flex flex-col gap-3.5">
-          <div className="w-full bg-white rounded-2xl p-2 flex items-center gap-2 border border-gray-300 shadow-sm focus-within:border-gray-400 focus-within:ring-1 focus-within:ring-gray-300 transition-all relative">
+          <div className="w-full bg-white rounded-2xl p-2 md:p-2.5 flex flex-col sm:flex-row items-stretch sm:items-center gap-2 border border-gray-300 shadow-sm focus-within:border-gray-400 focus-within:ring-1 focus-within:ring-gray-300 transition-all relative">
             
-            {/* Left: "Start At" Dropdown Button */}
-            <div className="relative" ref={dropdownRef}>
-              <button
-                onClick={() => setIsDropdownOpen(!isDropdownOpen)}
-                className="bg-gray-100 hover:bg-gray-200 text-gray-900 text-sm font-medium px-3.5 py-2 rounded-xl flex items-center gap-2 transition-colors cursor-pointer whitespace-nowrap"
-              >
-                <span>{selectedOrigin && selectedOrigin !== 'All Origins' ? selectedOrigin : t('busStops.filters.allOrigins')}</span>
-                <FiChevronDown size={16} className={`transition-transform ${isDropdownOpen ? 'rotate-180' : ''}`} />
-              </button>
+            {/* Search Input */}
+            <div className="flex-1 flex items-center gap-2">
+              <FiSearch size={20} className="text-gray-400 ml-2 flex-shrink-0" />
+              <input
+                type="text"
+                value={searchQuery}
+                onChange={(e) => handleSearchChange(e.target.value)}
+                placeholder={t('busStops.searchPlaceholder')}
+                className="w-full bg-transparent text-gray-900 placeholder-gray-400 text-sm md:text-base font-normal outline-none py-1"
+              />
 
-              {/* Dropdown Menu List */}
-              {isDropdownOpen && (
-                <div className="absolute top-12 left-0 z-50 bg-white border border-gray-200 rounded-xl shadow-lg w-52 py-1 flex flex-col animate-in fade-in zoom-in-95 duration-150">
-                  {originOptions.map((option) => (
-                    <button
-                      key={option}
-                      onClick={() => {
-                        setSelectedOrigin(option);
-                        setIsDropdownOpen(false);
-                      }}
-                      className={`px-4 py-2.5 text-left text-sm flex items-center justify-between hover:bg-gray-100 transition-colors cursor-pointer ${
-                        (selectedOrigin === option || (!selectedOrigin && option === 'All Origins'))
-                          ? 'font-bold text-gray-900 bg-gray-50'
-                          : 'text-gray-700'
-                      }`}
-                    >
-                      <span>{option === 'All Origins' ? t('busStops.filters.allOrigins') : option}</span>
-                      {(selectedOrigin === option || (!selectedOrigin && option === 'All Origins')) && (
-                        <FiCheck size={16} className="text-gray-800" />
-                      )}
-                    </button>
-                  ))}
-                </div>
+              {searchQuery && (
+                <button
+                  onClick={() => handleSearchChange('')}
+                  className="p-1.5 text-gray-400 hover:text-gray-600 rounded-full hover:bg-gray-100 cursor-pointer transition-colors"
+                  title="Clear search"
+                >
+                  <FiX size={18} />
+                </button>
               )}
             </div>
 
-            {/* Center: Search Input */}
-            <FiSearch size={20} className="text-gray-400 ml-1 flex-shrink-0" />
-            <input
-              type="text"
-              value={searchQuery}
-              onChange={(e) => handleSearchChange(e.target.value)}
-              placeholder={t('busStops.searchPlaceholder')}
-              className="flex-1 bg-transparent text-gray-900 placeholder-gray-400 text-sm md:text-base font-normal outline-none py-1"
-            />
+            <div className="hidden sm:block w-[1px] h-6 bg-gray-200" />
 
-            {searchQuery && (
-              <button
-                onClick={() => handleSearchChange('')}
-                className="p-1.5 text-gray-400 hover:text-gray-600 rounded-full hover:bg-gray-100 cursor-pointer transition-colors"
-                title="Clear search"
+            {/* Intuitive Time Shift Selector Dropdown */}
+            <div className="flex items-center gap-1.5 bg-gray-50 hover:bg-gray-100 px-3 py-1.5 rounded-xl border border-gray-200 transition-colors cursor-pointer">
+              <FiClock size={16} className="text-gray-500 flex-shrink-0" />
+              <select
+                value={selectedTimeFilter || 'all'}
+                onChange={(e) => setSelectedTimeFilter(e.target.value)}
+                className="bg-transparent text-xs font-semibold text-gray-800 outline-none cursor-pointer py-0.5"
               >
-                <FiX size={18} />
-              </button>
-            )}
+                <option value="all">ทุกช่วงเวลา</option>
+                <option value="morning">รอบเช้า (05:00 - 12:00)</option>
+                <option value="afternoon">รอบบ่าย (12:00 - 17:00)</option>
+                <option value="evening">รอบเย็น/ค่ำ (17:00+)</option>
+              </select>
+            </div>
           </div>
 
-          {/* Vehicle Category Filter Pills */}
+          {/* Vehicle Category Filter Pills (AC pill placed at the very end) */}
           <div className="flex items-center gap-2 overflow-x-auto pb-1 scrollbar-none">
             {[
-              { id: 'all', label: t('busStops.filters.all') },
-              { id: 'minibus', label: t('busStops.filters.minibus') },
-              { id: 'van', label: t('busStops.filters.van') },
-              { id: 'bus', label: t('busStops.filters.bus') },
+              { id: 'all', label: t('busStops.filters.all', 'ทั้งหมด') },
+              { id: 'minibus', label: t('busStops.filters.minibus', 'รถสองแถว / มินิบัส') },
+              { id: 'van', label: t('busStops.filters.van', 'รถตู้') },
+              { id: 'bus', label: t('busStops.filters.bus', 'รถทัวร์') },
+              { id: 'ac', label: t('ri.vehicleAc', 'รถแอร์ (ปรับอากาศ)') },
             ].map((filter) => {
               const isSelected = selectedVehicleFilter === filter.id;
               return (
@@ -308,7 +302,7 @@ function BusStops() {
           </span>
         </div>
 
-        {/* Content Grid */}
+        {/* Content Grid (Clean, Spacious, Uncluttered Cards) */}
         {filteredRoutes.length === 0 ? (
           <div className="w-full bg-white rounded-2xl border border-gray-200 p-12 text-center flex flex-col items-center justify-center gap-3 shadow-sm">
             <FaBus size={36} className="text-gray-300" />
@@ -328,8 +322,8 @@ function BusStops() {
             {filteredRoutes.map((card) => (
               <div
                 key={card.id}
-                onClick={() => handleSelectRoute(card)}
-                className="bg-white rounded-2xl border border-gray-200 overflow-hidden shadow-sm hover:shadow-md hover:-translate-y-0.5 transition-all duration-200 cursor-pointer flex flex-col group"
+                onClick={() => setModalRoute(card)}
+                className="bg-white rounded-2xl border border-gray-200 overflow-hidden shadow-sm hover:shadow-md hover:-translate-y-1 transition-all duration-200 cursor-pointer flex flex-col group"
               >
                 {/* Photo Area */}
                 <div className="h-44 w-full bg-gray-100 relative overflow-hidden">
@@ -338,7 +332,7 @@ function BusStops() {
                     alt={card.title}
                     className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
                   />
-                  <span className="absolute top-3 right-3 bg-white/95 backdrop-blur-sm text-gray-800 text-[11px] font-medium px-2.5 py-1 rounded-full border border-gray-200 shadow-sm">
+                  <span className="absolute top-3 right-3 bg-white/95 backdrop-blur-sm text-gray-800 text-[11px] font-semibold px-2.5 py-1 rounded-full border border-gray-200 shadow-sm">
                     {card.vehicleTypeBadge}
                   </span>
                   {card.route_code && (
@@ -348,42 +342,25 @@ function BusStops() {
                   )}
                 </div>
 
-                {/* Card Text Details */}
-                <div className="p-4 flex flex-col flex-1 gap-2">
-                  <div className="flex items-center justify-between text-[11px] text-gray-500 font-semibold uppercase tracking-wider">
-                    <span>{card.stopName}</span>
-                    <span className="text-gray-400 font-normal">{card.company}</span>
+                {/* Card Details (Spacious & Clean) */}
+                <div className="p-4 flex flex-col flex-1 justify-between gap-3">
+                  <div className="flex flex-col gap-1.5">
+                    <h3 className="text-base font-bold text-gray-900 leading-snug line-clamp-1 group-hover:text-pink-600 transition-colors">
+                      {card.title}
+                    </h3>
+
+                    <div className="flex items-center gap-1.5 text-xs text-gray-600 font-medium">
+                      <FiMapPin size={14} className="text-pink-500 flex-shrink-0" />
+                      <span className="line-clamp-1">{card.origin}</span>
+                      <FiArrowRight size={12} className="text-gray-400 flex-shrink-0" />
+                      <span className="font-semibold text-gray-800 line-clamp-1">{card.destination}</span>
+                    </div>
                   </div>
 
-                  <h3 className="text-sm font-bold text-gray-900 leading-snug line-clamp-1 group-hover:text-pink-600 transition-colors">
-                    {card.title}
-                  </h3>
-
-                  <div className="flex items-center gap-1.5 text-xs text-gray-600 font-normal">
-                    <FiMapPin size={13} className="text-gray-400 flex-shrink-0" />
-                    <span>{card.origin}</span>
-                    <FiArrowRight size={12} className="text-gray-400 flex-shrink-0" />
-                    <span className="font-semibold text-gray-800 line-clamp-1">{card.destination}</span>
-                  </div>
-
-                  {/* Via Stops indicator if available */}
-                  {card.stopsVia && (
-                    <div className="flex items-center gap-1.5 text-[11px] text-gray-500 bg-gray-50 p-2 rounded-lg border border-gray-100 mt-1">
-                      <FiNavigation size={12} className="text-gray-400 flex-shrink-0" />
-                      <span className="line-clamp-1">Stops: {card.stopsVia}</span>
-                    </div>
-                  )}
-
-                  <div className="flex items-center justify-between text-xs text-gray-500 pt-2.5 border-t border-gray-100 mt-auto">
-                    <div className="flex items-center gap-1">
-                      <FiClock size={12} className="text-gray-400" />
-                      <span>{card.timeRange}</span>
-                    </div>
-
-                    <div className="flex items-center gap-1 font-semibold text-gray-900">
-                      <span>{card.fare}</span>
-                      <FiArrowRight size={13} className="text-gray-400 group-hover:text-pink-600 group-hover:translate-x-1 transition-all ml-1" />
-                    </div>
+                  {/* View Details CTA */}
+                  <div className="flex items-center justify-between pt-2 border-t border-gray-100 text-xs font-semibold text-pink-600 group-hover:text-pink-700">
+                    <span>{t('busStops.viewDetails', 'ดูรายละเอียด')}</span>
+                    <FiArrowRight size={14} className="group-hover:translate-x-1 transition-transform" />
                   </div>
                 </div>
               </div>
@@ -392,8 +369,141 @@ function BusStops() {
         )}
 
       </div>
+
+      {/* Interactive Detail Popup Modal */}
+      <AnimatePresence>
+        {modalRoute && (
+          <div className="fixed inset-0 z-50 flex items-center justify-center p-4 sm:p-6">
+            {/* Backdrop */}
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              onClick={() => setModalRoute(null)}
+              className="fixed inset-0 bg-black/50 backdrop-blur-sm"
+            />
+
+            {/* Modal Box */}
+            <motion.div
+              initial={{ opacity: 0, scale: 0.95, y: 20 }}
+              animate={{ opacity: 1, scale: 1, y: 0 }}
+              exit={{ opacity: 0, scale: 0.95, y: 20 }}
+              transition={{ type: 'spring', damping: 25, stiffness: 300 }}
+              className="relative w-full max-w-lg bg-white rounded-3xl shadow-2xl overflow-hidden z-10 flex flex-col max-h-[90vh]"
+            >
+              {/* Header Image Area */}
+              <div className="relative h-48 w-full bg-gray-900 flex-shrink-0">
+                <img
+                  src={modalRoute.photo}
+                  alt={modalRoute.title}
+                  className="w-full h-full object-cover opacity-80"
+                />
+                <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent" />
+
+                {/* Close Button */}
+                <button
+                  onClick={() => setModalRoute(null)}
+                  className="absolute top-4 right-4 w-9 h-9 rounded-full bg-black/40 hover:bg-black/70 text-white flex items-center justify-center backdrop-blur-md transition-colors cursor-pointer z-20"
+                  aria-label="Close"
+                >
+                  <FiX size={20} />
+                </button>
+
+                {/* Badges and Title on Header */}
+                <div className="absolute bottom-4 left-5 right-5 flex flex-col gap-1.5">
+                  <div className="flex items-center gap-2">
+                    <span className="bg-pink-500 text-white text-xs font-bold px-2.5 py-0.5 rounded-md">
+                      {t('busStops.card.line')} {modalRoute.routeCode}
+                    </span>
+                    <span className="bg-white/90 text-gray-900 text-xs font-semibold px-2.5 py-0.5 rounded-md backdrop-blur-sm">
+                      {modalRoute.vehicleTypeBadge}
+                    </span>
+                  </div>
+                  <h2 className="text-xl font-black text-white leading-tight drop-shadow">
+                    {modalRoute.title}
+                  </h2>
+                </div>
+              </div>
+
+              {/* Modal Scrollable Content */}
+              <div className="p-6 overflow-y-auto flex flex-col gap-5">
+                {/* Origin & Destination Line */}
+                <div className="flex items-center justify-between gap-4 pb-4 border-b border-gray-100">
+                  <div className="flex flex-col">
+                    <span className="text-[11px] font-semibold text-gray-400 uppercase tracking-wider">{t('ri.from', 'ต้นทาง')}</span>
+                    <span className="text-base font-bold text-[#241D4F]">{modalRoute.origin}</span>
+                  </div>
+                  <div className="flex items-center justify-center text-gray-400">
+                    <FiArrowRight size={18} />
+                  </div>
+                  <div className="flex flex-col items-end">
+                    <span className="text-[11px] font-semibold text-gray-400 uppercase tracking-wider">{t('ri.to', 'ปลายทาง')}</span>
+                    <span className="text-base font-bold text-[#241D4F]">{modalRoute.destination}</span>
+                  </div>
+                </div>
+
+                {/* Key Information List */}
+                <div className="flex flex-col gap-3 py-1">
+                  <div className="flex items-center justify-between py-1.5">
+                    <div className="flex items-center gap-2.5 text-xs font-semibold text-gray-500">
+                      <FiClock size={15} className="text-gray-400" />
+                      <span>{t('busStops.modal.time', 'เวลาเดินรถ')}</span>
+                    </div>
+                    <span className="text-xs font-bold text-gray-900">{modalRoute.timeRange}</span>
+                  </div>
+
+                  <div className="flex items-center justify-between py-1.5">
+                    <div className="flex items-center gap-2.5 text-xs font-semibold text-gray-500">
+                      <FiDollarSign size={15} className="text-gray-400" />
+                      <span>{t('busStops.modal.fare', 'อัตราค่าโดยสาร')}</span>
+                    </div>
+                    <span className="text-xs font-bold text-gray-900">{modalRoute.fare}</span>
+                  </div>
+
+                  <div className="flex items-center justify-between py-1.5">
+                    <div className="flex items-center gap-2.5 text-xs font-semibold text-gray-500">
+                      <FaBuilding size={14} className="text-gray-400" />
+                      <span>{t('busStops.modal.operator', 'ผู้ให้บริการ')}</span>
+                    </div>
+                    <span className="text-xs font-bold text-gray-900">{modalRoute.company}</span>
+                  </div>
+                </div>
+
+                {/* Stops Via Section */}
+                {modalRoute.stopsVia && (
+                  <div className="pt-3 border-t border-gray-100 flex flex-col gap-1.5">
+                    <span className="text-xs font-bold text-gray-800 flex items-center gap-1.5">
+                      <FiNavigation className="text-gray-400" size={14} />
+                      {t('busStops.modal.stopsVia', 'จุดจอดระหว่างทาง')}
+                    </span>
+                    <p className="text-xs text-gray-600 leading-relaxed font-normal">
+                      {modalRoute.stopsVia}
+                    </p>
+                  </div>
+                )}
+              </div>
+
+              {/* Modal Footer CTA */}
+              <div className="p-4 bg-gray-50 border-t border-gray-100 flex-shrink-0">
+                <button
+                  onClick={() => {
+                    const orig = modalRoute.originTh || modalRoute.origin;
+                    const dest = modalRoute.destTh || modalRoute.destination;
+                    setModalRoute(null);
+                    navigate(`/route-information?origin=${encodeURIComponent(orig)}&destination=${encodeURIComponent(dest)}`);
+                  }}
+                  className="w-full bg-[#241D4F] hover:bg-[#1a143b] text-white font-bold text-sm py-3.5 px-4 rounded-xl transition-all shadow-md flex items-center justify-center gap-2 cursor-pointer"
+                >
+                  <span>{t('busStops.modal.viewOnMap', 'ดูจำลองเส้นทางบนแผนที่')}</span>
+                  <FiArrowRight size={16} />
+                </button>
+              </div>
+            </motion.div>
+          </div>
+        )}
+      </AnimatePresence>
     </div>
   );
 }
 
-export default BusStops;
+export default BusStops;

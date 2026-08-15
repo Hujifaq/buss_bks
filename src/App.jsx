@@ -8,6 +8,7 @@ import HelpSupport from './pages/HelpSupport'
 import Navbar from './components/Navbar'
 import Loader from './components/Loader'
 import Topbar from './components/Topbar'
+import Footer from './components/footer'
 
 function App() {
   const location = useLocation()
@@ -34,7 +35,7 @@ function App() {
         <Route path="/search" element={<BusStops />} />
         <Route path="/help" element={<HelpSupport />} />
       </Routes>
-      
+      <Footer />
     </>
   )
 }
