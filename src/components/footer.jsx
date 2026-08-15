@@ -1,6 +1,6 @@
 import React from 'react';
 import { FaArrowUp, FaFacebookF, FaLinkedinIn, FaTwitter } from 'react-icons/fa';
-import logoBks from '../assets/logo_bks.png';
+import logoBks from '../assets/logo_bks2.png';
 import logoStation from '../assets/logo_station.png';
 
 const quickLinks = [

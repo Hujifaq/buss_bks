@@ -9,6 +9,7 @@ import Guidebook from '../components/Guidebook';
 import AboutUs from '../components/AboutUs';
 import DevTeam from '../components/DevTeam';
 import { useTranslation } from 'react-i18next';
+import bgBks from '../assets/bg-bks.jpg';
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -472,7 +473,7 @@ function Index() {
       <div
         className="relative w-full h-[60vh] min-h-[400px] flex flex-col items-center justify-end pb-24 md:pb-20"
         style={{
-          backgroundImage: 'url("https://apywlcxidcnpbqmectgn.supabase.co/storage/v1/object/sign/Public/bg-bks.jpg?token=eyJraWQiOiJzdG9yYWdlLXVybC1zaWduaW5nLWtleV81YTVlNjRlNS1mODdhLTRmMjMtODA1OC1mNTNiYWJmYzk5ODciLCJhbGciOiJIUzI1NiJ9.eyJ1cmwiOiJQdWJsaWMvYmctYmtzLmpwZyIsInNjb3BlIjoiZG93bmxvYWQiLCJpYXQiOjE3ODY2OTcxMDQsImV4cCI6MTgxODIzMzEwNH0.S6mcZ0X_H3eUi7ld07vfR7q8Kz4CmIr_ny6byVI3hfk")',
+          backgroundImage: `url(${bgBks})`,
           backgroundSize: 'cover',
           backgroundPosition: 'center 80%',
         }}

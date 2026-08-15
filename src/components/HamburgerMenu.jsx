@@ -5,6 +5,7 @@ import { useNavigate, useLocation } from 'react-router-dom';
 import { FiHome, FiMap, FiSearch, FiHelpCircle, FiChevronRight, FiX } from 'react-icons/fi';
 import { FaBus } from 'react-icons/fa';
 import { RxHamburgerMenu } from 'react-icons/rx';
+import logoBks from '../assets/logo_bks2.png';
 
 function HamburgerMenu({ isOpen, setIsOpen }) {
   const navigate = useNavigate();
@@ -87,7 +88,7 @@ function HamburgerMenu({ isOpen, setIsOpen }) {
                 <div className="flex items-center justify-between pb-4 border-b border-gray-100">
                   <div className="flex items-center gap-3">
                     <img
-                      src="https://apywlcxidcnpbqmectgn.supabase.co/storage/v1/object/sign/Public/logo_bks.png?token=eyJraWQiOiJzdG9yYWdlLXVybC1zaWduaW5nLWtleV81YTVlNjRlNS1mODdhLTRmMjMtODA1OC1mNTNiYWJmYzk5ODciLCJhbGciOiJIUzI1NiJ9.eyJ1cmwiOiJQdWJsaWMvbG9nb19ia3MucG5nIiwic2NvcGUiOiJkb3dubG9hZCIsImlhdCI6MTc4NjY5NzAxMSwiZXhwIjoxODE4MjMzMDExfQ.TnnYcawRyR1u3O7TAjpwCE37r1Z-qDPXxuOk0zk2xZY"
+                      src={logoBks}
                       alt="BKS Logo"
                       className="h-8 w-auto object-contain"
                     />
